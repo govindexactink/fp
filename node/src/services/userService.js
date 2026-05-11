@@ -1,4 +1,5 @@
 const User = require("../model/userModel");
+const ZipcodeOverride = require("../model/zipcodePriceOverrideModel");
 const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
@@ -57,6 +58,22 @@ const updateUser = async (userId, updateData) => {
   const forbidden = ["password", "role", "_id"];
   forbidden.forEach((f) => delete updateData[f]);
   const user = await User.findByIdAndUpdate(userId, updateData, { new: true, runValidators: true });
+  if (!user) throw { status: 404, message: "User not found" };
+  return user;
+};
+
+const updateUnselectedZipcodes = async (userId, updateData) => {
+  const allowed = ["service_areas_zipcodes", "unselected_zipcodes"];
+  const payload = {};
+  allowed.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(updateData, key)) {
+      payload[key] = updateData[key];
+    }
+  });
+  if (!Object.keys(payload).length) {
+    throw { status: 400, message: "No valid unselected zipcode data provided" };
+  }
+  const user = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true });
   if (!user) throw { status: 404, message: "User not found" };
   return user;
 };
@@ -243,6 +260,47 @@ const deleteLocation = async (userId, locationId) => {
   return { message: "Location deleted successfully" };
 };
 
+const addOrUpdateZipcodePriceOverride = async (userId, overrideData) => {
+  const { categoryId, taskId, zipcode, price } = overrideData;
+  if (!zipcode || !price) {
+    throw { status: 400, message: "Zipcode and price are required" };
+  }
+
+  const query = {
+    userId,
+    zipcode,
+    ...(categoryId ? { categoryId } : {}),
+    ...(taskId ? { taskId } : {}),
+  };
+
+  const update = {
+    userId,
+    categoryId,
+    taskId,
+    zipcode,
+    price,
+  };
+
+  const result = await ZipcodeOverride.findOneAndUpdate(query, update, {
+    new: true,
+    upsert: true,
+    runValidators: true,
+  });
+
+  return result;
+};
+
+const getZipcodePriceOverrides = async (userId, filter = {}) => {
+  const query = { userId, ...filter };
+  return ZipcodeOverride.find(query).lean();
+};
+
+const deleteZipcodePriceOverride = async (userId, overrideId) => {
+  const doc = await ZipcodeOverride.findOneAndDelete({ _id: overrideId, userId });
+  if (!doc) throw { status: 404, message: "Override not found" };
+  return { message: "Override deleted successfully" };
+};
+
 // ─── QUERY SERVICES ─────────────────────────────────────────────
 
 const getCheckedTasksWithFilters = async (userId) => {
@@ -296,5 +354,6 @@ module.exports = {
   addTask, updateTask, toggleTaskChecked, deleteTask,
   addFilter, updateFilter, toggleFilterChecked, deleteFilter,
   addLocation, updateLocation, deleteLocation,
-  getCheckedTasksWithFilters, getTotalPrice,
+  addOrUpdateZipcodePriceOverride, getZipcodePriceOverrides, deleteZipcodePriceOverride,
+  getCheckedTasksWithFilters, getTotalPrice, updateUnselectedZipcodes
 };

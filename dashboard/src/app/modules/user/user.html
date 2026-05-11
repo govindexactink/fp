@@ -1,5 +1,7 @@
 <div class="container mt-4">
-    <app-pending-modal *ngIf="showPendingModal" (acknowledged)="onPendingModalAcknowledged()">
+    <!-- <app-pending-modal *ngIf="showPendingModal" (acknowledged)="onPendingModalAcknowledged()">
+    </app-pending-modal> -->
+    <app-pending-modal *ngIf="showPendingModal" (acknowledged)="openLocationModal()">
     </app-pending-modal>
 
     <div *ngIf="loading; else userDataLoaded">
@@ -30,36 +32,94 @@
                 </div>
 
                 <hr>
-                <h5>Locations</h5>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Locations</h5>
+                    <button class="btn btn-sm btn-primary" (click)="openLocationModal()">Add Location</button>
+                </div>
                 <div *ngIf="userData?.locations?.length; else noLocations">
                     <div class="list-group">
                         <div *ngFor="let loc of userData.locations" class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ loc.description }}</h5>
-                                <small>{{ loc.type }}</small>
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">{{ loc.description }}</h5>
+                                    <p class="mb-1">
+                                        <strong>City:</strong> {{ loc.city }}, <strong>State:</strong> {{ loc.state }}
+                                        <span *ngIf="loc.country">, {{ loc.country }}</span>
+                                    </p>
+                                </div>
+                                <button class="btn btn-sm btn-danger" (click)="deleteLocation(loc._id)">Delete</button>
                             </div>
-                            <p class="mb-1">
-                                <strong>City:</strong> {{ loc.city }}, <strong>State:</strong> {{ loc.state }}
-                                <span *ngIf="loc.country">, {{ loc.country }}</span>
-                            </p>
-                            <small *ngIf="loc.zipcode"><strong>Zipcode:</strong> {{ loc.zipcode }}</small>
                         </div>
                     </div>
                 </div>
                 <ng-template #noLocations>
-                    <p class="text-muted">No locations defined.</p>
+                    <div class="alert alert-warning">
+                        No locations defined. Add at least one location so your service areas can match zipcodes.
+                    </div>
                 </ng-template>
                 <hr>
-                <h5>Service Areas (Zipcodes)</h5>
-                <div *ngIf="userData?.service_areas_zipcodes?.length; else noServiceAreas">
-                    <div class="row">
-                        <div *ngFor="let zip of userData.service_areas_zipcodes" class="col-md-1 mb-2">
-                            <span class="badge bg-secondary">{{ zip }}</span>
+                <!-- <h5>Service Areas (Zipcodes)</h5>
+                <div *ngIf="userData?.service_areas_zipcodes?.length; else noServiceAreas" class="border rounded p-2"
+                    style="max-height: 200px; overflow-y: auto;">
+                    <div class="row g-2">
+                        <div *ngFor="let zip of userData.service_areas_zipcodes" class="col-auto">
+                            <span class="badge bg-secondary d-flex align-items-center">
+                                {{ zip }}
+                                <button type="button" class="btn btn-sm btn-close btn-close-white ms-2"
+                                    aria-label="Remove" (click)="removeServiceZipcode(zip)"></button>
+                            </span>
                         </div>
                     </div>
                 </div>
                 <ng-template #noServiceAreas>
                     <p class="text-muted">No service areas defined.</p>
+                </ng-template> -->
+                <h5>Service Areas (Zipcodes)</h5>
+                <div *ngIf="userData?.service_areas_zipcodes?.length; else noServiceAreas" class="border rounded p-2"
+                    style="max-height: 200px; overflow-y: auto;">
+                    <div class="row g-2">
+                        <div *ngFor="let zip of userData.service_areas_zipcodes" class="col-auto">
+                            <span class="badge bg-secondary d-flex align-items-center gap-1">
+                                <input type="checkbox" checked class="form-check-input mt-0"
+                                    (change)="removeServiceZipcode(zip)" />
+                                {{ zip }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noServiceAreas>
+                    <p class="text-muted">No service areas defined.</p>
+                </ng-template>
+
+                <!-- <h6 class="mt-4">Unselected Zipcodes</h6>
+                <div *ngIf="unselectedZipcodes?.length; else noUnselected">
+                    <div class="row g-2">
+                        <div *ngFor="let zip of unselectedZipcodes" class="col-auto">
+                            <span class="badge bg-warning d-flex align-items-center">
+                                {{ zip }}
+                                <button type="button" class="btn btn-sm btn-close ms-2" aria-label="Add back"
+                                    (click)="addBackZipcode(zip)"></button>
+                            </span>
+                        </div>
+                    </div>
+                </div> -->
+                <h6 class="mt-4">Unselected Zipcodes</h6>
+                <div *ngIf="unselectedZipcodes?.length; else noUnselected" class="border rounded p-2"
+                    style="max-height: 200px; overflow-y: auto;">
+                    <div class="row g-2">
+                        <div *ngFor="let zip of unselectedZipcodes" class="col-auto">
+                            <span class="badge bg-warning d-flex align-items-center gap-1">
+                                <input type="checkbox" class="form-check-input mt-0" (change)="addBackZipcode(zip)" />
+                                {{ zip }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noUnselected>
+                    <p class="text-muted">No unselected zipcodes.</p>
+                </ng-template>
+                <ng-template #noUnselected>
+                    <p class="text-muted">No unselected zipcodes.</p>
                 </ng-template>
 
                 <hr>
@@ -68,21 +128,63 @@
 
 
                 <h5>Categories & Tasks</h5>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div></div>
+                    <button class="btn btn-sm btn-success" (click)="addCategory()">Add Category</button>
+                </div>
                 <div *ngIf="userData?.categories?.length; else noCategories">
                     <div *ngFor="let cat of userData.categories" class="mb-4">
                         <div class="card border-left-primary">
-                            <div class="card-header bg-light">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                 <strong>{{ cat.categoryName }}</strong>
+                                <div>
+                                    <!-- <button class="btn btn-sm btn-primary me-1" (click)="addTask(cat)">Add Task</button> -->
+                                    <button class="btn btn-sm btn-danger" (click)="deleteCategory(cat)">Delete
+                                        Category</button>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div *ngIf="cat.tasks?.length; else noTasks">
                                     <div class="list-group">
-                                        <div *ngFor="let task of cat.tasks"
-                                            class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span>{{ task.taskName }}</span>
-                                            <span class="badge bg-success rounded-pill" *ngIf="task.checked">true</span>
-                                            <span class="badge bg-danger rounded-pill"
-                                                *ngIf="!task.checked">false</span>
+                                        <div *ngFor="let task of cat.tasks" class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1">
+                                                        <input type="checkbox" [(ngModel)]="task.checked"
+                                                            (ngModelChange)="onTaskCheckedChange(cat, task)"> {{
+                                                        task.taskName }}
+                                                    </h6>
+                                                    <p class="mb-1">Price: Lead {{ task.price?.lead ?? 0 }}, Call {{
+                                                        task.price?.call ?? 0 }}, Appointment {{ task.price?.appointment
+                                                        ?? 0 }}</p>
+                                                    <p class="mb-1" *ngIf="task.zipcodes?.length">
+                                                        <strong>Zipcodes:</strong>
+                                                        <span *ngFor="let zip of task.zipcodes"
+                                                            class="badge bg-info text-dark me-1">
+                                                            {{ zip }}
+                                                            <button type="button"
+                                                                class="btn btn-close btn-close-white btn-sm ms-1"
+                                                                aria-label="Override"
+                                                                (click)="openOverrideModal(cat, task, zip)"></button>
+                                                        </span>
+                                                    </p>
+                                                    <p class="mb-0" *ngIf="getMatchingZipcodes(task)?.length">
+                                                        <strong>Matched service zipcodes:</strong>
+                                                        <span *ngFor="let zip of getMatchingZipcodes(task)"
+                                                            class="badge bg-success me-1">{{ zip }}</span>
+                                                    </p>
+                                                    <div *ngFor="let zip of getMatchingZipcodes(task)" class="mt-2">
+                                                        <small class="text-muted">Price for {{ zip }}: Lead {{
+                                                            getPriceForZipcode(task, zip)?.lead }}, Call {{
+                                                            getPriceForZipcode(task, zip)?.call }}, Appointment {{
+                                                            getPriceForZipcode(task, zip)?.appointment }}</small>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="text-end">
+                                                    <button class="btn btn-sm btn-danger"
+                                                        (click)="deleteTask(cat, task)">Delete</button>
+                                                </div> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -96,6 +198,111 @@
                 <ng-template #noCategories>
                     <p class="text-muted">No categories defined.</p>
                 </ng-template>
+
+                <!-- Location Modal -->
+                <div class="modal fade" [class.show]="showLocationModal"
+                    [style.display]="showLocationModal ? 'block' : 'none'" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Location</h5>
+                                <button type="button" class="btn-close" aria-label="Close"
+                                    (click)="closeLocationModal()"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- <div class="mb-3">
+                                    <label class="form-label">Choose Location</label>
+                                    <select class="form-select" [(ngModel)]="selectedLocation">
+                                        <option [ngValue]="null">Select a location</option>
+                                        <option *ngFor="let loc of availableLocations" [ngValue]="loc">
+                                            {{ loc.location }} - {{ loc.city }}, {{ loc.state }}
+                                        </option>
+                                    </select>
+                                </div> -->
+                                <!-- REPLACE WITH THIS -->
+                                <div class="mb-3">
+                                    <label class="form-label">Search Location</label>
+                                    <input type="text" class="form-control" placeholder="Type city or location name..."
+                                        [(ngModel)]="locationSearchQuery" (input)="onLocationSearch()" />
+                                    <div *ngIf="locationSearchLoading" class="mt-2 text-muted small">
+                                        <span class="spinner-border spinner-border-sm me-1"></span> Searching...
+                                    </div>
+                                    <ul class="list-group mt-1" *ngIf="filteredLocations?.length && !selectedLocation">
+                                        <li *ngFor="let loc of filteredLocations"
+                                            class="list-group-item list-group-item-action" style="cursor:pointer"
+                                            (click)="selectLocation(loc)">
+                                            {{ loc.location }} — {{ loc.city }}, {{ loc.state }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="selectedLocation"
+                                    class="alert alert-success d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ selectedLocation.location }}</strong><br />
+                                        <small>{{ selectedLocation.city }}, {{ selectedLocation.state }}
+                                            {{ selectedLocation.country ? '(' + selectedLocation.country + ')' : '' }}
+                                        </small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" (click)="clearSelectedLocation()">✕
+                                        Change</button>
+                                </div>
+                                <div *ngIf="selectedLocation">
+                                    <div class="mb-3">
+                                        <p class="mb-1"><strong>Selected:</strong> {{ selectedLocation.location }}</p>
+                                        <p class="mb-0">{{ selectedLocation.city }}, {{ selectedLocation.state }} {{
+                                            selectedLocation.country ? '(' + selectedLocation.country + ')' : '' }}</p>
+                                    </div>
+                                </div>
+                                <div *ngIf="locationModalError" class="alert alert-danger mt-3">
+                                    {{ locationModalError }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    (click)="closeLocationModal()">Cancel</button>
+                                <button type="button" class="btn btn-primary" (click)="addLocation()"
+                                    [disabled]="!selectedLocation">
+                                    Save Location
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Override Modal -->
+                <div class="modal fade" [class.show]="overrideModalOpen"
+                    [style.display]="overrideModalOpen ? 'block' : 'none'" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Override Zipcode Price</h5>
+                                <button type="button" class="btn-close" aria-label="Close"
+                                    (click)="closeOverrideModal()"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Zipcode:</strong> {{ overrideState.zipcode }}</p>
+                                <div class="mb-3">
+                                    <label class="form-label">Lead Price</label>
+                                    <input type="number" class="form-control" [(ngModel)]="overrideState.lead" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Call Price</label>
+                                    <input type="number" class="form-control" [(ngModel)]="overrideState.call" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Appointment Price</label>
+                                    <input type="number" class="form-control" [(ngModel)]="overrideState.appointment" />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    (click)="closeOverrideModal()">Close</button>
+                                <button type="button" class="btn btn-primary" (click)="saveOverridePrice()">Save
+                                    Override</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </ng-template>

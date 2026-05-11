@@ -37,6 +37,10 @@ const LocationSchema = new mongoose.Schema({
   state: { type: String, default: '', trim: true },
   country: { type: String, default: '', trim: true },
   zipcode: { type: String, default: null, trim: true },
+  zipcodes: {
+    type: [String],
+    default: []
+  },
   type: {
     type: String,
     enum: ['city', 'state', 'zipcode', 'country', 'radius'],
@@ -44,7 +48,7 @@ const LocationSchema = new mongoose.Schema({
   },
   radius: { type: Number, default: null },   // numeric radius, e.g. 20
   unit: { type: String, default: null },     // e.g. "Miles"
-}, { _id: false }); // use _id: false to avoid generating new ObjectId for each subdoc
+});
 
 
 
@@ -69,9 +73,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
-      select: false,
+      // select: false,
     },
     service_areas_zipcodes: {
+      type: [String],
+      required: false,
+      default: [],
+    },
+    unselected_zipcodes: {
       type: [String],
       required: false,
       default: [],

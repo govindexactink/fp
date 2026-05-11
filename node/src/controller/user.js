@@ -55,6 +55,11 @@ exports.updateUser = globle.asyncHandler(async (req, res) => {
   globle.sendResponse(res, 200, "User updated", user);
 });
 
+exports.updateUnselectedZipcodes = globle.asyncHandler(async (req, res) => {
+  const user = await userService.updateUnselectedZipcodes(req.params.userId, req.body);
+  globle.sendResponse(res, 200, "Unselected zipcodes updated", user);
+});
+
 exports.deleteUser = globle.asyncHandler(async (req, res) => {
   const result = await userService.deleteUser(req.params.userId);
   globle.sendResponse(res, 200, result.message);
@@ -185,7 +190,26 @@ exports.deleteLocation = globle.asyncHandler(async (req, res) => {
   const result = await userService.deleteLocation(req.params.userId, req.params.locationId);
   globle.sendResponse(res, 200, result.message);
 });
+exports.addZipcodePriceOverride = globle.asyncHandler(async (req, res) => {
+  const result = await userService.addOrUpdateZipcodePriceOverride(req.params.userId, req.body);
+  globle.sendResponse(res, 201, 'Zipcode override saved', result);
+});
 
+exports.getZipcodePriceOverrides = globle.asyncHandler(async (req, res) => {
+  const filter = {
+    categoryId: req.query.categoryId,
+    taskId: req.query.taskId,
+    zipcode: req.query.zipcode
+  };
+  Object.keys(filter).forEach(key => filter[key] == null && delete filter[key]);
+  const result = await userService.getZipcodePriceOverrides(req.params.userId, filter);
+  globle.sendResponse(res, 200, 'Zipcode overrides fetched', result);
+});
+
+exports.deleteZipcodePriceOverride = globle.asyncHandler(async (req, res) => {
+  const result = await userService.deleteZipcodePriceOverride(req.params.userId, req.params.overrideId);
+  globle.sendResponse(res, 200, result.message);
+});
 // ─── QUERY ───────────────────────────────────────────────────────
 
 exports.getCheckedTasksWithFilters = globle.asyncHandler(async (req, res) => {

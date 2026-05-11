@@ -1,8 +1,10 @@
 <div class="d-flex">
   <div class="col-sm-2">
-    <p *ngIf="isLoggedIn && isAdmin" routerLink="/categories" class="alert alert-info">Categories</p>
-    <p *ngIf="isLoggedIn && isAdmin" routerLink="/admin-users" class="alert alert-info">Admin Users</p>
-    <p *ngIf="isLoggedIn" class="btn btn-danger" (click)="logout()">Logout</p>
+    <p *ngIf="isLoggedIn && isAdmin" routerLink="/categories" class="alert alert-info" style="cursor: pointer">
+      Categories</p>
+    <p *ngIf="isLoggedIn && isAdmin" routerLink="/admin-users" class="alert alert-info" style="cursor: pointer">
+      Users</p>
+    <p *ngIf="isLoggedIn" class="alert alert-danger" style="cursor: pointer" (click)="logout()">Logout</p>
 
   </div>
   <div class="col-sm-10 px-4">

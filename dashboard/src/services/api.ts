@@ -64,6 +64,49 @@ export class Api {
       return this.http.get<any[]>('assets/locations.json');
    }
 
+   addUserLocation(userId: string, data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/user/${userId}/locations`, data, {
+         headers: this.getAuthHeaders()
+      });
+   }
+
+   deleteUserLocation(userId: string, locationId: string): Observable<any> {
+      return this.http.delete(`${this.baseUrl}/user/${userId}/locations/${locationId}`, {
+         headers: this.getAuthHeaders()
+      });
+   }
+
+   updateUser(userId: string, data: any): Observable<any> {
+      return this.http.put(`${this.baseUrl}/user/${userId}`, data, {
+         headers: this.getAuthHeaders()
+      });
+   }
+
+   updateUnselectedZipcodes(userId: string, data: any): Observable<any> {
+      return this.http.put(`${this.baseUrl}/user/${userId}/unselected-zipcodes`, data, {
+         headers: this.getAuthHeaders()
+      });
+   }
+
+   getZipcodePriceOverrides(userId: string, params: any = {}): Observable<any> {
+      return this.http.get(`${this.baseUrl}/user/${userId}/zipcode-prices`, {
+         headers: this.getAuthHeaders(),
+         params
+      });
+   }
+
+   saveZipcodePriceOverride(userId: string, data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/user/${userId}/zipcode-prices`, data, {
+         headers: this.getAuthHeaders()
+      });
+   }
+
+   deleteZipcodePriceOverride(userId: string, overrideId: string): Observable<any> {
+      return this.http.delete(`${this.baseUrl}/user/${userId}/zipcode-prices/${overrideId}`, {
+         headers: this.getAuthHeaders()
+      });
+   }
+
    sendLocation(data: any) {
       return this.http.post(`${this.baseUrl}/task/location`, data);
    }

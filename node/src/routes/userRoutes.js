@@ -21,6 +21,7 @@ userRouter.get("/profile", protect, ctrl.getProfile);
 userRouter.get("/", protect, ctrl.getAllUsers);
 userRouter.get("/:userId", protect, ctrl.getUserById);
 userRouter.put("/:userId", protect, ctrl.updateUser);
+userRouter.put("/:userId/unselected-zipcodes", protect, ctrl.updateUnselectedZipcodes);
 userRouter.put("/:userId/status", protect, ctrl.updateUserStatus);
 userRouter.delete("/:userId", protect, ctrl.deleteUser);
 
@@ -68,6 +69,14 @@ userRouter.delete(`${taskBase}/:filterId`, protect, ctrl.deleteFilter);
 userRouter.post("/:userId/locations", protect, ctrl.addLocation);
 userRouter.put("/:userId/locations/:locationId", protect, ctrl.updateLocation);
 userRouter.delete("/:userId/locations/:locationId", protect, ctrl.deleteLocation);
+
+// ─── OVERLAY / OVERRIDE ROUTES ───────────────────────────────────
+// GET /api/users/:userId/zipcode-prices
+// POST /api/users/:userId/zipcode-prices
+// DELETE /api/users/:userId/zipcode-prices/:overrideId
+userRouter.get("/:userId/zipcode-prices", protect, ctrl.getZipcodePriceOverrides);
+userRouter.post("/:userId/zipcode-prices", protect, ctrl.addZipcodePriceOverride);
+userRouter.delete("/:userId/zipcode-prices/:overrideId", protect, ctrl.deleteZipcodePriceOverride);
 
 // ─── QUERY ROUTES ────────────────────────────────────────────────
 // GET /api/users/:userId/checked-tasks
