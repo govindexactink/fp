@@ -1,0 +1,300 @@
+const User = require("../model/userModel");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
+const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
+
+// ─── AUTH SERVICES ──────────────────────────────────────────────
+
+const registerUser = async (data) => {
+  const { username, email, password, categories = [], locations = [], service_areas_zipcodes = [] } = data;
+
+
+  const existing = await User.findOne({ $or: [{ email }, { username }] });
+  if (existing) {
+    const field = existing.email === email ? "Email" : "Username";
+    throw { status: 409, message: `${field} already exists` };
+  }
+
+  const user = await User.create({
+    username,
+    email,
+    password,
+    categories,
+    locations,
+    service_areas_zipcodes
+  });
+
+  console.log("User created:", user);
+
+  return { user: sanitizeUser(user) };
+};
+
+const loginUser = async ({ email, password }) => {
+  const user = await User.findOne({ email }).select("+password");
+  // if (!user || !(await user.comparePassword(password))) {
+  //   throw { status: 401, message: "Invalid email or password" };
+  // }  
+  console.log("JWT_SECRET", JWT_SECRET)
+  console.log("JWT_EXPIRES", JWT_EXPIRES)
+  const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
+  return { user: sanitizeUser(user), token };
+};
+
+// ─── USER SERVICES ──────────────────────────────────────────────
+
+const getAllUsers = async () => {
+  return User.find({ isActive: true }).select("-__v");
+};
+
+const getUserById = async (userId) => {
+  const user = await User.findById(userId).select("-__v");
+  if (!user) throw { status: 404, message: "User not found" };
+  return user;
+};
+
+const updateUser = async (userId, updateData) => {
+  const forbidden = ["password", "role", "_id"];
+  forbidden.forEach((f) => delete updateData[f]);
+  const user = await User.findByIdAndUpdate(userId, updateData, { new: true, runValidators: true });
+  if (!user) throw { status: 404, message: "User not found" };
+  return user;
+};
+
+const updateUserStatus = async (userId, status) => {
+  if (!["active", "pending"].includes(status)) {
+    throw { status: 400, message: "Invalid status. Must be 'active' or 'pending'" };
+  }
+  const user = await User.findByIdAndUpdate(userId, { status }, { new: true, runValidators: true });
+  if (!user) throw { status: 404, message: "User not found" };
+  return sanitizeUser(user);
+};
+
+const deleteUser = async (userId) => {
+  const user = await User.findByIdAndDelete(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  return { message: "User deleted successfully" };
+};
+
+// ─── SERVICE SERVICES ───────────────────────────────────────────
+// NOTE: Services have been removed. Categories are now at top level.
+
+// ─── CATEGORY SERVICES ──────────────────────────────────────────
+
+const addCategory = async (userId, categoryData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  user.categories.push(categoryData);
+  await user.save();
+  return user.categories[user.categories.length - 1];
+};
+
+const updateCategory = async (userId, categoryId, updateData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  Object.assign(category, updateData);
+  await user.save();
+  return category;
+};
+
+const deleteCategory = async (userId, categoryId) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  category.deleteOne();
+  await user.save();
+  return { message: "Category deleted successfully" };
+};
+
+// ─── TASK SERVICES ──────────────────────────────────────────────
+
+const addTask = async (userId, categoryId, taskData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  category.tasks.push(taskData);
+  await user.save();
+  return category.tasks[category.tasks.length - 1];
+};
+
+const updateTask = async (userId, categoryId, taskId, updateData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  Object.assign(task, updateData);
+  await user.save();
+  return task;
+};
+
+const toggleTaskChecked = async (userId, categoryId, taskId) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  task.checked = !task.checked;
+  await user.save();
+  return task;
+};
+
+const deleteTask = async (userId, categoryId, taskId) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  task.deleteOne();
+  await user.save();
+  return { message: "Task deleted successfully" };
+};
+
+// ─── FILTER SERVICES ────────────────────────────────────────────
+
+const addFilter = async (userId, categoryId, taskId, filterData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  task.filters.push(filterData);
+  await user.save();
+  return task.filters[task.filters.length - 1];
+};
+
+const updateFilter = async (userId, categoryId, taskId, filterId, updateData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  const filter = task.filters.id(filterId);
+  if (!filter) throw { status: 404, message: "Filter not found" };
+  Object.assign(filter, updateData);
+  await user.save();
+  return filter;
+};
+
+const toggleFilterChecked = async (userId, categoryId, taskId, filterId) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  const filter = task.filters.id(filterId);
+  if (!filter) throw { status: 404, message: "Filter not found" };
+  filter.isChecked = !filter.isChecked;
+  await user.save();
+  return filter;
+};
+
+const deleteFilter = async (userId, categoryId, taskId, filterId) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const category = user.categories.id(categoryId);
+  if (!category) throw { status: 404, message: "Category not found" };
+  const task = category.tasks.id(taskId);
+  if (!task) throw { status: 404, message: "Task not found" };
+  const filter = task.filters.id(filterId);
+  if (!filter) throw { status: 404, message: "Filter not found" };
+  filter.deleteOne();
+  await user.save();
+  return { message: "Filter deleted successfully" };
+};
+
+// ─── LOCATION SERVICES ──────────────────────────────────────────
+
+const addLocation = async (userId, locationData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  user.locations.push(locationData);
+  await user.save();
+  return user.locations[user.locations.length - 1];
+};
+
+const updateLocation = async (userId, locationId, updateData) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const location = user.locations.id(locationId);
+  if (!location) throw { status: 404, message: "Location not found" };
+  Object.assign(location, updateData);
+  await user.save();
+  return location;
+};
+
+const deleteLocation = async (userId, locationId) => {
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+  const location = user.locations.id(locationId);
+  if (!location) throw { status: 404, message: "Location not found" };
+  location.deleteOne();
+  await user.save();
+  return { message: "Location deleted successfully" };
+};
+
+// ─── QUERY SERVICES ─────────────────────────────────────────────
+
+const getCheckedTasksWithFilters = async (userId) => {
+  const user = await User.findById(userId);
+  const getCheckedTasksWithFilters = async (userId) => {
+    const user = await User.findById(userId);
+    if (!user) throw { status: 404, message: "User not found" };
+
+    const result = [];
+    user.categories.forEach((category) => {
+      category.tasks.forEach((task) => {
+        if (task.checked) {
+          const checkedFilters = task.filters.filter((f) => f.isChecked);
+          result.push({
+            categoryId: category.categoryId,
+            categoryName: category.categoryName,
+            taskId: task.taskId,
+            taskName: task.taskName,
+            taskPrice: task.taskPrice,
+            checkedFilters,
+          });
+        }
+      });
+    });
+    return result;
+  };
+}
+
+const getTotalPrice = async (userId) => {
+  const checkedItems = await getCheckedTasksWithFilters(userId);
+  let total = 0;
+  checkedItems.forEach((item) => {
+    total += item.taskPrice;
+    item.checkedFilters.forEach((f) => (total += f.filterPrice));
+  });
+  return { total, breakdown: checkedItems };
+};
+
+// ─── HELPERS ────────────────────────────────────────────────────
+
+const sanitizeUser = (user) => {
+  const u = user.toObject();
+  delete u.password;
+  return u;
+};
+
+module.exports = {
+  registerUser, loginUser,
+  getAllUsers, getUserById, updateUser, deleteUser, updateUserStatus,
+  addCategory, updateCategory, deleteCategory,
+  addTask, updateTask, toggleTaskChecked, deleteTask,
+  addFilter, updateFilter, toggleFilterChecked, deleteFilter,
+  addLocation, updateLocation, deleteLocation,
+  getCheckedTasksWithFilters, getTotalPrice,
+};

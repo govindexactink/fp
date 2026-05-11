@@ -1,0 +1,348 @@
+<div class="auth-wrapper">
+    <!-- Left panel -->
+    <div class="auth-panel-left d-none d-lg-flex">
+        <div class="brand-content">
+            <div class="brand-logo">
+                <span class="logo-icon">⬡</span>
+                <span class="logo-text">Findpros</span>
+            </div>
+            <h1 class="brand-headline">Build your<br><em>service flow</em><br>today.</h1>
+            <p class="brand-sub">Manage services, tasks, and locations — all in one place.</p>
+            <div class="step-indicators">
+                <div class="step-dot" [class.active]="step === 1" [class.done]="step > 1">
+                    <span>1</span>
+                </div>
+                <div class="step-line" [class.done]="step > 1"></div>
+                <div class="step-dot" [class.active]="step === 2">
+                    <span>2</span>
+                </div>
+            </div>
+            <div class="step-labels">
+                <span [class.active-label]="step===1">Account</span>
+                <span [class.active-label]="step===2">Services & Location</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="auth-panel-right">
+        <div class="form-card">
+
+            <!-- Mobile logo -->
+            <div class="mobile-brand d-lg-none mb-4">
+                <span class="logo-icon">⬡</span>
+                <span class="logo-text">Findpross</span>
+            </div>
+
+            <div class="form-header">
+                <h2>Create account</h2>
+                <p>Already have one? <a routerLink="/login" class="auth-link">Sign in</a></p>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="progress-bar-wrap mb-4">
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" [style.width.%]="step === 1 ? 50 : 100"></div>
+                </div>
+                <span class="progress-label">Step {{ step }} of 2</span>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+                <!-- ═══════════════ STEP 1: CREDENTIALS ═══════════════ -->
+                <div *ngIf="step === 1" class="step-block">
+
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <div class="input-group-custom">
+                            <span class="input-icon">👤</span>
+                            <input type="text" class="form-control custom-input" formControlName="username"
+                                placeholder="johndoe"
+                                [class.is-invalid]="f['username'].invalid && f['username'].touched">
+                        </div>
+                        <div class="invalid-feedback d-block" *ngIf="f['username'].invalid && f['username'].touched">
+                            <span *ngIf="f['username'].errors?.['required']">Username is required.</span>
+                            <span *ngIf="f['username'].errors?.['minlength']">At least 3 characters.</span>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label class="form-label">Email address</label>
+                        <div class="input-group-custom">
+                            <span class="input-icon">✉️</span>
+                            <input type="email" class="form-control custom-input" formControlName="email"
+                                placeholder="john@example.com"
+                                [class.is-invalid]="f['email'].invalid && f['email'].touched">
+                        </div>
+                        <div class="invalid-feedback d-block" *ngIf="f['email'].invalid && f['email'].touched">
+                            <span *ngIf="f['email'].errors?.['required']">Email is required.</span>
+                            <span *ngIf="f['email'].errors?.['email']">Enter a valid email.</span>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group-custom">
+                            <span class="input-icon">🔒</span>
+                            <input [type]="showPassword ? 'text' : 'password'" class="form-control custom-input"
+                                formControlName="password" placeholder="Min 6 characters"
+                                [class.is-invalid]="f['password'].invalid && f['password'].touched">
+                            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                                {{ showPassword ? '🙈' : '👁️' }}
+                            </button>
+                        </div>
+                        <div class="invalid-feedback d-block" *ngIf="f['password'].invalid && f['password'].touched">
+                            <span *ngIf="f['password'].errors?.['required']">Password is required.</span>
+                            <span *ngIf="f['password'].errors?.['minlength']">At least 6 characters.</span>
+                        </div>
+                        <!-- Strength meter -->
+                        <div class="password-strength mt-1" *ngIf="f['password'].value">
+                            <div class="strength-bar">
+                                <div class="strength-fill"
+                                    [style.width.%]="f['password'].value.length >= 10 ? 100 : f['password'].value.length >= 6 ? 60 : 30"
+                                    [class.weak]="f['password'].value.length < 6"
+                                    [class.medium]="f['password'].value.length >= 6 && f['password'].value.length < 10"
+                                    [class.strong]="f['password'].value.length >= 10">
+                                </div>
+                            </div>
+                            <span class="strength-label">
+                                {{ f['password'].value.length >= 10 ? 'Strong' :
+                                f['password'].value.length >= 6 ? 'Medium' : 'Weak' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-4">
+                        <label class="form-label">Confirm password</label>
+                        <div class="input-group-custom">
+                            <span class="input-icon">🔑</span>
+                            <input [type]="showConfirm ? 'text' : 'password'" class="form-control custom-input"
+                                formControlName="confirmPassword" placeholder="Repeat password"
+                                [class.is-invalid]="(form.hasError('mismatch') || f['confirmPassword'].errors?.['required']) && f['confirmPassword'].touched">
+                            <button type="button" class="toggle-password" (click)="showConfirm = !showConfirm">
+                                {{ showConfirm ? '🙈' : '👁️' }}
+                            </button>
+                        </div>
+                        <div class="invalid-feedback d-block"
+                            *ngIf="f['confirmPassword'].touched && (f['confirmPassword'].errors?.['required'] || form.hasError('mismatch'))">
+                            Passwords do not match.
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-auth w-100" (click)="nextStep()"
+                        [disabled]="!step1Valid">
+                        Continue &rarr;
+                    </button>
+                </div>
+
+                <!-- ═══════════════ STEP 2: SERVICES + LOCATION ═══════════════ -->
+                <div *ngIf="step === 2" class="step-block">
+
+                    <!-- ─── SERVICES SEARCH ─── -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Select Categories & Tasks
+                            <span class="text-muted fw-normal ms-1" style="font-size:12px;">
+                                (click to see all categories)
+                            </span>
+                        </label>
+
+                        <!-- Search input with dropdown -->
+                        <div class="search-wrapper" style="position:relative;">
+                            <div class="input-group-custom">
+                                <span class="input-icon">🔍</span>
+                                <input type="text" class="form-control custom-input" placeholder="Search categories…"
+                                    [value]="serviceSearchQuery" (input)="onServiceSearch($event)"
+                                    (blur)="closeDropdown()" autocomplete="off">
+                            </div>
+
+                            <!-- ─── DROPDOWN RESULTS ─── -->
+                            <div class="service-dropdown" *ngIf="showDropdown && filteredCategories.length">
+
+                                <div *ngFor="let cat of filteredCategories" class="dropdown-category">
+
+                                    <!-- Category row — click to select/add it -->
+                                    <div class="dropdown-cat-row" [class.is-selected]="isCategorySelected(cat._id)"
+                                        (mousedown)="selectCategory(cat)">
+                                        <span class="cat-badge">📁</span>
+                                        <span class="cat-name">{{ cat.name }}</span>
+                                        <span class="cat-count" *ngIf="cat.tasks?.length">
+                                            {{ cat.tasks.length }} task{{ cat.tasks.length > 1 ? 's' : '' }}
+                                        </span>
+                                        <span class="cat-select-indicator" *ngIf="isCategorySelected(cat._id)">✓</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <!-- no results -->
+                            <div class="no-results"
+                                *ngIf="showDropdown && filteredCategories.length === 0 && serviceSearchQuery">
+                                No categories found for "{{ serviceSearchQuery }}"
+                            </div>
+                        </div>
+
+                        <!-- ─── SELECTED CATEGORIES BOX ─── -->
+                        <div class="selected-categories-box mt-3" *ngIf="selectedCategories.length">
+
+                            <div class="selected-cat-header">
+                                <span>Selected Categories ({{ selectedCategories.length }})</span>
+                                <small class="text-muted">Uncheck tasks to deactivate</small>
+                            </div>
+
+                            <div class="selected-category-card"
+                                *ngFor="let cat of selectedCategories; let catIndex = index">
+
+                                <!-- Category name with remove button -->
+                                <div class="cat-card-header">
+                                    <span class="cat-card-badge">📂</span>
+                                    <span class="cat-card-name">{{ cat.categoryName }}</span>
+                                    <button type="button" class="remove-cat-btn" (click)="removeCategory(catIndex)"
+                                        title="Remove category">✕</button>
+                                </div>
+
+                                <!-- Tasks within category -->
+                                <div class="cat-tasks-list">
+                                    <div class="cat-task-item" *ngFor="let task of cat.tasks; let taskIndex = index">
+                                        <div class="form-check mb-0">
+                                            <input type="checkbox" class="form-check-input"
+                                                [id]="'task-' + catIndex + '-' + taskIndex" [checked]="task.checked"
+                                                (change)="toggleTaskInCategory(catIndex, taskIndex)">
+                                            <label class="form-check-label" [for]="'task-' + catIndex + '-' + taskIndex"
+                                                [class.text-muted]="!task.checked"
+                                                [class.text-decoration-line-through]="!task.checked">
+                                                {{ task.taskName }}
+                                            </label>
+                                        </div>
+                                        <div class="task-prices-inline" *ngIf="task.checked">
+                                            <span class="price-pill lead" *ngIf="task.price?.[0]?.lead">L ₹{{
+                                                task.price[0].lead }}</span>
+                                            <span class="price-pill call" *ngIf="task.price?.[0]?.call">C ₹{{
+                                                task.price[0].call }}</span>
+                                            <span class="price-pill appt" *ngIf="task.price?.[0]?.appointment">A ₹{{
+                                                task.price[0].appointment }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Empty hint -->
+                        <div class="empty-hint" *ngIf="!selectedCategories.length">
+                            Click on the search box and select categories to add their tasks.
+                        </div>
+
+                    </div>
+
+                    <!-- ─── LOCATION ─── -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Locations</label>
+                        <button type="button" class="btn btn-outline-primary w-100 add-loc-btn" (click)="openModal()">
+                            + Add Location
+                        </button>
+                    </div>
+
+                    <!-- Selected locations list -->
+                    <div class="location-list mb-3" *ngIf="selectedLocations.length">
+                        <div class="loc-list-header">
+                            Locations added ({{ selectedLocations.length }})
+                        </div>
+                        <div class="location-row" *ngFor="let loc of selectedLocations; let i = index">
+                            <span class="loc-icon">📍</span>
+                            <span class="loc-text">
+                                {{ loc.city || loc.state }}
+                                <span class="loc-type">{{ loc.type === 'state' ? 'State' : 'City' }}</span>
+                            </span>
+                            <button type="button" class="remove-loc-btn" (click)="removeLocation(i)">✕</button>
+                        </div>
+                    </div>
+
+                    <!-- Error -->
+                    <div class="alert alert-danger py-2 mb-3" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+                    <!-- Navigation buttons -->
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-auth flex-fill" (click)="prevStep()">
+                            &larr; Back
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-auth flex-fill" [disabled]="loading">
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                            {{ loading ? 'Creating...' : 'Create Account' }}
+                        </button>
+                    </div>
+
+                    <button type="button" class="btn btn-link w-100 mt-2 skip-btn" (click)="onSubmit()"
+                        [disabled]="loading">
+                        Skip &amp; create account
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+
+        <!-- ═══════════════ LOCATION MODAL ═══════════════ -->
+        <div id="locationModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">📍 Select Locations</h5>
+                        <button type="button" class="btn-close" (click)="closeModal()"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <!-- Search -->
+                        <input type="text" class="form-control mb-3" placeholder="Search city or state…"
+                            (input)="onSearch($event)">
+
+                        <!-- Search results -->
+                        <div class="modal-loc-list" *ngIf="filteredLocations.length">
+                            <div *ngFor="let loc of filteredLocations" class="modal-loc-item"
+                                [class.selected]="isTempSelected(loc)" (click)="selectLocation(loc)">
+                                <span class="modal-loc-check" *ngIf="isTempSelected(loc)">✓</span>
+                                <span>{{ loc.city }}, {{ loc.state }}</span>
+                            </div>
+                        </div>
+
+                        <div class="text-muted text-center py-3" *ngIf="filteredLocations.length === 0">
+                            Start typing to search locations
+                        </div>
+
+                        <!-- Temp selected badges -->
+                        <div class="mt-3" *ngIf="tempLocations.length">
+                            <div class="temp-loc-header mb-2">
+                                Selected ({{ tempLocations.length }})
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span *ngFor="let l of tempLocations" class="badge bg-primary">
+                                    {{ l.city }}, {{ l.state }}
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="addAllLocations()"
+                            [disabled]="!tempLocations.length">
+                            Add {{ tempLocations.length ? '(' + tempLocations.length + ')' : '' }}
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

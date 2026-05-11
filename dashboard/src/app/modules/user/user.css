@@ -1,0 +1,18 @@
+.user-page {
+    display: flex;
+    justify-content: center;
+}
+
+.user-page .card {
+    max-width: 640px;
+    border-radius: 18px;
+}
+
+.user-page h2 {
+    margin-bottom: 12px;
+}
+
+.user-page .lead {
+    margin-bottom: 20px;
+    color: #555;
+}

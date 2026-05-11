@@ -1,0 +1,969 @@
+[
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles"
+  },
+  {
+    "location": "Brooklyn",
+    "state": "New York",
+    "type": "state",
+    "stateShort": "NY",
+    "city": "New York"
+  },
+  {
+    "location": "Lincoln Park",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Chicago"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Houston"
+  },
+  {
+    "location": "Camelback East",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Phoenix"
+  },
+  {
+    "location": "Center City",
+    "state": "Pennsylvania",
+    "stateShort": "PA",
+    "city": "Philadelphia"
+  },
+  {
+    "location": "Mission District",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco"
+  },
+  {
+    "location": "Capitol Hill",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Seattle"
+  },
+  {
+    "location": "Little Havana",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Miami"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Dallas"
+  },
+  {
+    "location": "Midtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Atlanta"
+  },
+  {
+    "location": "Back Bay",
+    "state": "Massachusetts",
+    "stateShort": "MA",
+    "city": "Boston"
+  },
+  {
+    "location": "Downtown",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Denver"
+  },
+  {
+    "location": "The Strip",
+    "state": "Nevada",
+    "stateShort": "NV",
+    "city": "Las Vegas"
+  },
+  {
+    "location": "Pearl District",
+    "state": "Oregon",
+    "stateShort": "OR",
+    "city": "Portland",
+    "type": "city"
+  },
+  {
+    "location": "French Quarter",
+    "state": "Louisiana",
+    "stateShort": "LA",
+    "city": "New Orleans"
+  },
+  {
+    "location": "Downtown",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Detroit"
+  },
+  {
+    "location": "Short North",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Columbus"
+  },
+  {
+    "location": "Downtown",
+    "state": "Minnesota",
+    "stateShort": "MN",
+    "city": "Minneapolis"
+  },
+  {
+    "location": "Downtown",
+    "state": "Wisconsin",
+    "stateShort": "WI",
+    "city": "Milwaukee"
+  },
+  {
+    "location": "Old Town",
+    "state": "Virginia",
+    "stateShort": "VA",
+    "city": "Alexandria"
+  },
+  {
+    "location": "Downtown",
+    "state": "Tennessee",
+    "stateShort": "TN",
+    "city": "Nashville"
+  },
+  {
+    "location": "Downtown",
+    "state": "Indiana",
+    "stateShort": "IN",
+    "city": "Indianapolis"
+  },
+  {
+    "location": "Downtown",
+    "state": "Missouri",
+    "stateShort": "MO",
+    "city": "Kansas City"
+  },
+  {
+    "location": "Downtown",
+    "state": "Missouri",
+    "stateShort": "MO",
+    "city": "St. Louis"
+  },
+  {
+    "location": "Brickell",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Miami"
+  },
+  {
+    "location": "Hollywood",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles"
+  },
+  {
+    "location": "Queens",
+    "state": "New York",
+    "type": "state",
+    "stateShort": "NY",
+    "city": "New York"
+  },
+  {
+    "location": "SoHo",
+    "state": "New York",
+    "type": "state",
+    "stateShort": "NY",
+    "city": "New York"
+  },
+  {
+    "location": "Harlem",
+    "state": "New York",
+    "type": "state",
+    "stateShort": "NY",
+    "city": "New York"
+  },
+  {
+    "location": "Chinatown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco"
+  },
+  {
+    "location": "Santa Monica",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles"
+  },
+  {
+    "location": "Beverly Hills",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles"
+  },
+  {
+    "location": "La Jolla",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Diego"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Diego"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Tucson"
+  },
+  {
+    "location": "Downtown",
+    "state": "New Mexico",
+    "stateShort": "NM",
+    "city": "Albuquerque"
+  },
+  {
+    "location": "Downtown",
+    "state": "Utah",
+    "stateShort": "UT",
+    "city": "Salt Lake City"
+  },
+  {
+    "location": "Downtown",
+    "state": "Idaho",
+    "stateShort": "ID",
+    "city": "Boise"
+  },
+  {
+    "location": "Downtown",
+    "state": "Montana",
+    "stateShort": "MT",
+    "city": "Billings"
+  },
+  {
+    "location": "Downtown",
+    "state": "Wyoming",
+    "stateShort": "WY",
+    "city": "Cheyenne"
+  },
+  {
+    "location": "Downtown",
+    "state": "North Dakota",
+    "stateShort": "ND",
+    "city": "Fargo"
+  },
+  {
+    "location": "Downtown",
+    "state": "South Dakota",
+    "stateShort": "SD",
+    "city": "Sioux Falls"
+  },
+  {
+    "location": "Downtown",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Omaha"
+  },
+  {
+    "location": "Downtown",
+    "state": "Iowa",
+    "stateShort": "IA",
+    "city": "Des Moines"
+  },
+  {
+    "location": "Downtown",
+    "state": "Kansas",
+    "stateShort": "KS",
+    "city": "Wichita"
+  },
+  {
+    "location": "Downtown",
+    "state": "Oklahoma",
+    "stateShort": "OK",
+    "city": "Oklahoma City"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arkansas",
+    "stateShort": "AR",
+    "city": "Little Rock"
+  },
+  {
+    "location": "Downtown",
+    "state": "Mississippi",
+    "stateShort": "MS",
+    "city": "Jackson"
+  },
+  {
+    "location": "Downtown",
+    "state": "Alabama",
+    "stateShort": "AL",
+    "city": "Birmingham"
+  },
+  {
+    "location": "Downtown",
+    "state": "South Carolina",
+    "stateShort": "SC",
+    "city": "Columbia"
+  },
+  {
+    "location": "Downtown",
+    "state": "North Carolina",
+    "stateShort": "NC",
+    "city": "Charlotte"
+  },
+  {
+    "location": "Downtown",
+    "state": "Kentucky",
+    "stateShort": "KY",
+    "city": "Louisville"
+  },
+  {
+    "location": "Downtown",
+    "state": "West Virginia",
+    "stateShort": "WV",
+    "city": "Charleston"
+  },
+  {
+    "location": "Downtown",
+    "state": "Delaware",
+    "stateShort": "DE",
+    "city": "Wilmington"
+  },
+  {
+    "location": "Downtown",
+    "state": "Rhode Island",
+    "stateShort": "RI",
+    "city": "Providence"
+  },
+  {
+    "location": "Downtown",
+    "state": "Vermont",
+    "stateShort": "VT",
+    "city": "Burlington"
+  },
+  {
+    "location": "Downtown",
+    "state": "Maine",
+    "stateShort": "ME",
+    "city": "Portland",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "New Hampshire",
+    "stateShort": "NH",
+    "city": "Manchester"
+  },
+  {
+    "location": "Downtown",
+    "state": "Connecticut",
+    "stateShort": "CT",
+    "city": "Hartford"
+  },
+  {
+    "location": "Downtown",
+    "state": "New Jersey",
+    "stateShort": "NJ",
+    "city": "Newark"
+  },
+  {
+    "location": "Downtown",
+    "state": "Maryland",
+    "stateShort": "MD",
+    "city": "Baltimore"
+  },
+  {
+    "location": "Downtown",
+    "state": "Virginia",
+    "stateShort": "VA",
+    "city": "Richmond"
+  },
+  {
+    "location": "Downtown",
+    "state": "Pennsylvania",
+    "stateShort": "PA",
+    "city": "Pittsburgh"
+  },
+  {
+    "location": "Downtown",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Cleveland"
+  },
+  {
+    "location": "Downtown",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Grand Rapids"
+  },
+  {
+    "location": "Downtown",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Springfield"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Austin"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "San Antonio"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Orlando"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Tampa"
+  },
+  {
+    "location": "Downtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Savannah"
+  },
+  {
+    "location": "Downtown",
+    "state": "Nevada",
+    "stateShort": "NV",
+    "city": "Reno"
+  },
+  {
+    "location": "Downtown",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Spokane"
+  },
+  {
+    "location": "Downtown",
+    "state": "Oregon",
+    "stateShort": "OR",
+    "city": "Eugene"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Sacramento"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Fresno"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Oakland"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Jose"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Bakersfield"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Mesa"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Chandler"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Fort Worth"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "El Paso"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Arlington"
+  },
+  {
+    "location": "Downtown",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Colorado Springs"
+  },
+  {
+    "location": "Downtown",
+    "state": "Nevada",
+    "stateShort": "NV",
+    "city": "Henderson"
+  },
+  {
+    "location": "Downtown",
+    "state": "Utah",
+    "stateShort": "UT",
+    "city": "Provo"
+  },
+  {
+    "location": "Downtown",
+    "state": "Idaho",
+    "stateShort": "ID",
+    "city": "Nampa"
+  },
+  {
+    "location": "Downtown",
+    "state": "Montana",
+    "stateShort": "MT",
+    "city": "Missoula"
+  },
+  {
+    "location": "Downtown",
+    "state": "Alaska",
+    "stateShort": "AK",
+    "city": "Anchorage"
+  },
+  {
+    "location": "Downtown",
+    "state": "Hawaii",
+    "stateShort": "HI",
+    "city": "Honolulu"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Irvine"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Anaheim"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Riverside"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Jacksonville"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "St. Petersburg"
+  },
+  {
+    "location": "Downtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Augusta"
+  },
+  {
+    "location": "Downtown",
+    "state": "North Carolina",
+    "stateShort": "NC",
+    "city": "Raleigh"
+  },
+  {
+    "location": "Downtown",
+    "state": "South Carolina",
+    "stateShort": "SC",
+    "city": "Charleston"
+  },
+  {
+    "location": "Downtown",
+    "state": "Tennessee",
+    "stateShort": "TN",
+    "city": "Memphis"
+  },
+  {
+    "location": "Downtown",
+    "state": "Kentucky",
+    "stateShort": "KY",
+    "city": "Lexington"
+  },
+  {
+    "location": "Downtown",
+    "state": "Indiana",
+    "stateShort": "IN",
+    "city": "Fort Wayne"
+  },
+  {
+    "location": "Downtown",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Cincinnati"
+  },
+  {
+    "location": "Downtown",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Lansing"
+  },
+  {
+    "location": "Downtown",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Peoria"
+  },
+  {
+    "location": "Downtown",
+    "state": "Missouri",
+    "stateShort": "MO",
+    "city": "Springfield"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arkansas",
+    "stateShort": "AR",
+    "city": "Fayetteville"
+  },
+  {
+    "location": "Downtown",
+    "state": "Oklahoma",
+    "stateShort": "OK",
+    "city": "Tulsa"
+  },
+  {
+    "location": "Downtown",
+    "state": "Kansas",
+    "stateShort": "KS",
+    "city": "Topeka"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Long Beach"
+  },
+  {
+    "location": "Midtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Plano"
+  },
+  {
+    "location": "Uptown",
+    "state": "North Carolina",
+    "stateShort": "NC",
+    "city": "Greensboro"
+  },
+  {
+    "location": "River Market",
+    "state": "Arkansas",
+    "stateShort": "AR",
+    "city": "Little Rock"
+  },
+  {
+    "location": "Old Town",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Pasadena"
+  },
+  {
+    "location": "Warehouse District",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Akron"
+  },
+  {
+    "location": "Downtown",
+    "state": "Virginia",
+    "stateShort": "VA",
+    "city": "Norfolk"
+  },
+  {
+    "location": "Capitol District",
+    "state": "New York",
+    "type": "state",
+    "stateShort": "NY",
+    "city": "Albany"
+  },
+  {
+    "location": "Historic District",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Macon"
+  },
+  {
+    "location": "Arts District",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Lubbock"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Santa Ana"
+  },
+  {
+    "location": "Central City",
+    "state": "Louisiana",
+    "stateShort": "LA",
+    "city": "Baton Rouge"
+  },
+  {
+    "location": "North End",
+    "state": "Massachusetts",
+    "stateShort": "MA",
+    "city": "Worcester"
+  },
+  {
+    "location": "Downtown",
+    "state": "Tennessee",
+    "stateShort": "TN",
+    "city": "Knoxville"
+  },
+  {
+    "location": "Midtown",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Lincoln"
+  },
+  {
+    "location": "Old Market",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Omaha"
+  },
+  {
+    "location": "Downtown",
+    "state": "Alabama",
+    "stateShort": "AL",
+    "city": "Montgomery"
+  },
+  {
+    "location": "French District",
+    "state": "Louisiana",
+    "stateShort": "LA",
+    "city": "Lafayette"
+  },
+  {
+    "location": "Downtown",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Boulder"
+  },
+  {
+    "location": "Central Ave",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Scottsdale"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Fort Lauderdale"
+  },
+  {
+    "location": "Bricktown",
+    "state": "Oklahoma",
+    "stateShort": "OK",
+    "city": "Oklahoma City"
+  },
+  {
+    "location": "Downtown",
+    "state": "Pennsylvania",
+    "stateShort": "PA",
+    "city": "Erie"
+  },
+  {
+    "location": "Riverfront",
+    "state": "Kentucky",
+    "stateShort": "KY",
+    "city": "Covington"
+  },
+  {
+    "location": "Downtown",
+    "state": "Mississippi",
+    "stateShort": "MS",
+    "city": "Gulfport"
+  },
+  {
+    "location": "University District",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Ann Arbor"
+  },
+  {
+    "location": "Downtown",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Tacoma"
+  },
+  {
+    "location": "Capitol Hill",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Denver"
+  },
+  {
+    "location": "South Side",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Rockford"
+  },
+  {
+    "location": "Downtown",
+    "state": "Nevada",
+    "stateShort": "NV",
+    "city": "Carson City"
+  },
+  {
+    "location": "Historic Downtown",
+    "state": "New Mexico",
+    "stateShort": "NM",
+    "city": "Santa Fe"
+  },
+  {
+    "location": "Downtown",
+    "state": "Utah",
+    "stateShort": "UT",
+    "city": "Ogden"
+  },
+  {
+    "location": "Market Street",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco"
+  },
+  {
+    "location": "Downtown",
+    "state": "Oregon",
+    "stateShort": "OR",
+    "city": "Salem"
+  },
+  {
+    "location": "Central Business District",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Dayton"
+  },
+  {
+    "location": "Downtown",
+    "state": "Kansas",
+    "stateShort": "KS",
+    "city": "Overland Park"
+  },
+  {
+    "location": "Pearl Street",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Boulder"
+  },
+  {
+    "location": "Downtown",
+    "state": "Indiana",
+    "stateShort": "IN",
+    "city": "Evansville"
+  },
+  {
+    "location": "Harbor Area",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Oxnard"
+  },
+  {
+    "location": "Downtown",
+    "state": "South Dakota",
+    "stateShort": "SD",
+    "city": "Rapid City"
+  },
+  {
+    "location": "Central District",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Bellevue"
+  },
+  {
+    "location": "Downtown",
+    "state": "Iowa",
+    "stateShort": "IA",
+    "city": "Cedar Rapids"
+  },
+  {
+    "location": "Arts Quarter",
+    "state": "Missouri",
+    "stateShort": "MO",
+    "city": "Columbia"
+  },
+  {
+    "location": "Downtown",
+    "state": "Idaho",
+    "stateShort": "ID",
+    "city": "Idaho Falls"
+  },
+  {
+    "location": "Midtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Athens"
+  },
+  {
+    "location": "Downtown",
+    "state": "Maine",
+    "stateShort": "ME",
+    "city": "Bangor"
+  },
+  {
+    "location": "Old Town",
+    "state": "Connecticut",
+    "stateShort": "CT",
+    "city": "New Haven"
+  },
+  {
+    "location": "Downtown",
+    "state": "New Jersey",
+    "stateShort": "NJ",
+    "city": "Jersey City"
+  },
+  {
+    "location": "Riverwalk",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "San Antonio"
+  },
+  {
+    "location": "Downtown",
+    "state": "Wisconsin",
+    "stateShort": "WI",
+    "city": "Madison"
+  }
+]

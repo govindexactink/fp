@@ -1,0 +1,102 @@
+<div class="container mt-4">
+    <app-pending-modal *ngIf="showPendingModal" (acknowledged)="onPendingModalAcknowledged()">
+    </app-pending-modal>
+
+    <div *ngIf="loading; else userDataLoaded">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #userDataLoaded>
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">User Profile</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <p><strong>Username:</strong> {{ userData?.username }}</p>
+                        <p><strong>Email:</strong> {{ userData?.email }}</p>
+                        <p><strong>Role:</strong> {{ userData?.role }}</p>
+                    </div>
+                    <div class="col-md-5">
+                        <p><strong>Status:</strong> {{ userData?.isActive ? 'Active' : 'Inactive' }}</p>
+                        <p><strong>Created At:</strong> {{ userData?.createdAt | date }}</p>
+                        <p><strong>Updated At:</strong> {{ userData?.updatedAt | date }}</p>
+                    </div>
+                </div>
+
+                <hr>
+                <h5>Locations</h5>
+                <div *ngIf="userData?.locations?.length; else noLocations">
+                    <div class="list-group">
+                        <div *ngFor="let loc of userData.locations" class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ loc.description }}</h5>
+                                <small>{{ loc.type }}</small>
+                            </div>
+                            <p class="mb-1">
+                                <strong>City:</strong> {{ loc.city }}, <strong>State:</strong> {{ loc.state }}
+                                <span *ngIf="loc.country">, {{ loc.country }}</span>
+                            </p>
+                            <small *ngIf="loc.zipcode"><strong>Zipcode:</strong> {{ loc.zipcode }}</small>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noLocations>
+                    <p class="text-muted">No locations defined.</p>
+                </ng-template>
+                <hr>
+                <h5>Service Areas (Zipcodes)</h5>
+                <div *ngIf="userData?.service_areas_zipcodes?.length; else noServiceAreas">
+                    <div class="row">
+                        <div *ngFor="let zip of userData.service_areas_zipcodes" class="col-md-1 mb-2">
+                            <span class="badge bg-secondary">{{ zip }}</span>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noServiceAreas>
+                    <p class="text-muted">No service areas defined.</p>
+                </ng-template>
+
+                <hr>
+
+
+
+
+                <h5>Categories & Tasks</h5>
+                <div *ngIf="userData?.categories?.length; else noCategories">
+                    <div *ngFor="let cat of userData.categories" class="mb-4">
+                        <div class="card border-left-primary">
+                            <div class="card-header bg-light">
+                                <strong>{{ cat.categoryName }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <div *ngIf="cat.tasks?.length; else noTasks">
+                                    <div class="list-group">
+                                        <div *ngFor="let task of cat.tasks"
+                                            class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>{{ task.taskName }}</span>
+                                            <span class="badge bg-success rounded-pill" *ngIf="task.checked">true</span>
+                                            <span class="badge bg-danger rounded-pill"
+                                                *ngIf="!task.checked">false</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template #noTasks>
+                                    <p class="text-muted">No tasks in this category.</p>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noCategories>
+                    <p class="text-muted">No categories defined.</p>
+                </ng-template>
+            </div>
+        </div>
+    </ng-template>
+</div>

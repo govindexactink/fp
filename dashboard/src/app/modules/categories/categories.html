@@ -1,0 +1,110 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2>Categories</h2>
+    </div>
+    <button type="submit" routerLink="/add-task" class="btn btn-primary">Add Task+</button>
+    <button type="submit" routerLink="/add-category" class="btn btn-success">Add Category+</button>
+  </div>
+  <!-- 
+  <form [formGroup]="categoryForm" (ngSubmit)="addCategory()" class="card mb-4 p-3 shadow-sm">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label">Category Name</label>
+        <input type="text" class="form-control" formControlName="name" placeholder="Enter category name" />
+      </div>
+      <div class="col-md-5">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-control" formControlName="description" placeholder="Enter description" />
+      </div>
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-success">Add Category</button>
+      </div>
+    </div>
+  </form> -->
+
+
+  <!-- Dropdown for all categories -->
+  <!-- <div class="mb-4">
+    <label for="categoryDropdown" class="form-label">All Categories</label>
+    <select id="categoryDropdown" class="form-select">
+      <option *ngFor="let cat of categories" [value]="cat._id">
+        {{ cat.name }} {{ cat.isUsed ? '(used)' : '' }}
+      </option>
+    </select>
+  </div> -->
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Id</th>
+        <th scope="col">Status</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let cat of categories; let i = index">
+
+        <!-- Category row -->
+        <tr class="table-secondary">
+          <th>{{ i + 1 }}</th>
+          <td>{{ cat?.name }}</td>
+          <td>{{ cat?.description }}</td>
+          <td>{{ cat?.cateId }}</td>
+          <td>{{ cat?.status }}</td>
+          <td>
+            <button class="btn btn-info mx-1" title="edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-danger mx-1" title="delete" (click)="deleteItem(cat)"><i
+                class="bi bi-trash"></i></button>
+            <button class="btn btn-primary mx-1" title="Add task" routerLink="/add-task"><i
+                class="bi bi-plus"></i></button>
+          </td>
+        </tr>
+
+        <!-- Tasks inside this category -->
+        <tr class="bg-light" *ngFor="let task of tasks; let e = index" [hidden]="!task.categoryId?.includes(cat._id)">
+
+          <th>{{e +1}} </th>
+          <td>{{ task?.name }}</td>
+          <td>{{ task?.description }}</td>
+          <td>{{ task?.taskId }}</td>
+          <td>{{ task?.status }}</td>
+          <td>
+            <button class="btn btn-info btn-sm me-1" title="Edit task" [routerLink]="['/edit-task', task._id, cat._id]">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-danger btn-sm me-1" title="Delete task" (click)="deleteTask(task)">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button class="btn btn-primary btn-sm" title="Add location">
+              <i class="bi bi-plus"></i>
+            </button>
+          </td>
+
+        </tr>
+
+      </ng-container>
+    </tbody>
+    <!-- <tbody>
+    <tr *ngFor="let item of categories; let i = index">
+      <th scope="row">{{i + 1}}</th>
+      <td>{{item?.name}}</td>
+      <td>{{item?.description}}</td>
+      <td>{{item?.cateId}}</td>
+      <td>{{item?.status}}</td>
+      <td></td>
+    </tr>
+    <tr class="bg-light" *ngFor="let item of tasks; let i = index">
+      <th scope="row">{{i + 1}}</th>
+      <td>{{item?.name}}</td>
+      <td>{{item?.description}}</td>
+      <td>{{item?.taskId}}</td>
+      <td>{{item?.status}}</td>
+      <td></td>
+    </tr>
+  </tbody> -->
+  </table>
+</div>

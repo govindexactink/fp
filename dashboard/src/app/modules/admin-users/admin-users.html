@@ -1,0 +1,73 @@
+<div class="users-container">
+    <div class="header">
+        <h1>All Users</h1>
+        <button class="btn-refresh" (click)="loadUsers()" [disabled]="loading">
+            {{ loading ? 'Loading...' : 'Refresh' }}
+        </button>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        Loading users...
+    </div>
+
+    <div *ngIf="!loading && users.length === 0" class="no-data">
+        No users found
+    </div>
+
+    <div class="table-wrapper">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of users">
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="badge"
+                            [ngClass]="{ 'badge-admin': user.role === 'admin', 'badge-user': user.role !== 'admin' }">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td>
+                        <div *ngIf="statusChangeUser?._id !== user._id" class="status-display">
+                            <span class="badge"
+                                [ngClass]="{ 'badge-active': user.status === 'active', 'badge-pending': user.status === 'pending' }">
+                                {{ user.status }}
+                            </span>
+                            <button class="btn-small" (click)="onStatusChange(user)">Change</button>
+                        </div>
+                        <div *ngIf="statusChangeUser?._id === user._id" class="status-edit">
+                            <select [(ngModel)]="newStatus" class="status-select">
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <button class="btn-save" (click)="saveStatusChange()">Save</button>
+                            <button class="btn-cancel" (click)="cancelStatusChange()">Cancel</button>
+                        </div>
+                    </td>
+                    <td>{{ user.createdAt | date: 'short' }}</td>
+                    <td>
+                        <button class="btn-delete" (click)="openDeleteConfirm(user)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <app-confirm-modal *ngIf="showDeleteConfirm" [title]="'Delete User'"
+        [message]="'Are you sure you want to delete ' + (userToDelete?.username || 'this user') + '? This action cannot be undone.'"
+        (confirm)="onConfirmDelete($event)">
+    </app-confirm-modal>
+</div>
