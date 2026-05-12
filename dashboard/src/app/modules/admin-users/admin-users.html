@@ -33,7 +33,7 @@
             </thead>
             <tbody>
                 <ng-container *ngFor="let user of users">
-                    <tr>
+                    <tr *ngIf="user.role !== 'admin'">
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
                         <td>
@@ -59,30 +59,30 @@
                                 <button class="btn-cancel" (click)="cancelStatusChange()">Cancel</button>
                             </div>
                         </td>
-                         <td>
-                             @if (user.isAdminLogin) {
-                                 <span class="badge badge-locked">
-                                     Locked
-                                     @if (user.lockedByAdmin?.username) {
-                                         by {{ user.lockedByAdmin.username }}
-                                     }
-                                 </span>
-                             } @else {
-                                 <span class="badge badge-unlocked">Not Locked</span>
-                             }
-                         </td>
+                        <td>
+                            @if (user.isAdminLogin) {
+                            <span class="badge badge-locked">
+                                Locked
+                                @if (user.lockedByAdmin?.username) {
+                                by {{ user.lockedByAdmin.username }}
+                                }
+                            </span>
+                            } @else {
+                            <span class="badge badge-unlocked">Not Locked</span>
+                            }
+                        </td>
                         <td>
                             {{ user.lockedAt ? (user.lockedAt | date:'short') : '—' }}
                         </td>
                         <td>
                             @if (user.role === 'admin' && user._id === getCurrentAdminId()) {
-                                <span class="text-muted">Current Admin</span>
+                            <span class="text-muted">Current Admin</span>
                             } @else if (user.role === 'admin') {
-                                <span class="text-muted">Admin</span>
+                            <span class="text-muted">Admin</span>
                             } @else if (user.isAdminLogin) {
-                                <button class="btn-unlock" (click)="exitImpersonation(user)">Unlock</button>
+                            <button class="btn-unlock" (click)="exitImpersonation(user)">Unlock</button>
                             } @else {
-                                <button class="btn-impersonate" (click)="impersonateUser(user)">Impersonate</button>
+                            <button class="btn-impersonate" (click)="impersonateUser(user)">Login as User</button>
                             }
                         </td>
                     </tr>
