@@ -300,6 +300,15 @@ const deleteLocation = async (userId, locationId) => {
     });
   }
 
+  // Delete all location prices for this location (city/state/type)
+  const locationType = location.type || 'city';
+  await LocationPrice.deleteMany({
+    userId,
+    city: location.city,
+    state: location.state,
+    type: locationType
+  });
+
   // Delete the location
   location.deleteOne();
   await user.save();
