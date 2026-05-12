@@ -211,6 +211,34 @@ exports.deleteZipcodePriceOverride = globle.asyncHandler(async (req, res) => {
   globle.sendResponse(res, 200, result.message);
 });
 
+exports.addOrUpdateLocationPrice = globle.asyncHandler(async (req, res) => {
+  const result = await userService.addOrUpdateLocationPrice(req.params.userId, req.body);
+  globle.sendResponse(res, 201, 'Location price saved', result);
+});
+
+exports.getLocationPrices = globle.asyncHandler(async (req, res) => {
+  const filter = {
+    categoryId: req.query.categoryId,
+    taskId: req.query.taskId,
+    city: req.query.city,
+    state: req.query.state,
+    type: req.query.type
+  };
+  Object.keys(filter).forEach(key => filter[key] == null && delete filter[key]);
+  const result = await userService.getLocationPrices(req.params.userId, filter);
+  globle.sendResponse(res, 200, 'Location prices fetched', result);
+});
+
+exports.addOrUpdateLocationPrice = globle.asyncHandler(async (req, res) => {
+  const result = await userService.addOrUpdateLocationPrice(req.params.userId, req.body);
+  globle.sendResponse(res, 201, 'Location price saved', result);
+});
+
+exports.deleteLocationPrice = globle.asyncHandler(async (req, res) => {
+  const result = await userService.deleteLocationPrice(req.params.userId, req.params.locationPriceId);
+  globle.sendResponse(res, 200, result.message);
+});
+
 exports.getTaskEditData = globle.asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const { categoryId, taskId } = req.query;

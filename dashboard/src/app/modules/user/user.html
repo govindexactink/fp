@@ -355,10 +355,62 @@
                                     </div>
                                 </div>
 
-                                <hr>
+                                 <hr>
 
-                                <!-- Location-wise Zipcode Price Overrides -->
-                                <h6>Location-wise Zipcode Price Overrides:</h6>
+                                 <!-- Location-wise Prices (City/State Level) -->
+                                 <div class="d-flex justify-content-between align-items-center mb-3">
+                                     <h6 class="mb-0">Location-wise Base Prices:</h6>
+                                     <button class="btn btn-sm btn-outline-primary" (click)="openLocationPriceModal({})">
+                                         + Add Location Price
+                                     </button>
+                                 </div>
+                                 <div *ngIf="locationPrices.length; else noLocationPrices" class="mb-4">
+                                     <div class="table-responsive">
+                                         <table class="table table-sm table-bordered">
+                                             <thead>
+                                                 <tr>
+                                                     <th>Location</th>
+                                                     <th>City</th>
+                                                     <th>State</th>
+                                                     <th>State Short</th>
+                                                     <th>Type</th>
+                                                     <th>Lead Price</th>
+                                                     <th>Call Price</th>
+                                                     <th>Appointment Price</th>
+                                                     <th>Action</th>
+                                                 </tr>
+                                             </thead>
+                                             <tbody>
+                                                 <tr *ngFor="let lp of locationPrices">
+                                                     <td>{{ lp.location || lp.city }}</td>
+                                                     <td>{{ lp.city }}</td>
+                                                     <td>{{ lp.state }}</td>
+                                                     <td>{{ lp.stateShort }}</td>
+                                                     <td>{{ lp.type }}</td>
+                                                     <td>{{ lp.price?.lead ?? 0 }}</td>
+                                                     <td>{{ lp.price?.call ?? 0 }}</td>
+                                                     <td>{{ lp.price?.appointment ?? 0 }}</td>
+                                                     <td>
+                                                         <button class="btn btn-sm btn-outline-primary me-1"
+                                                             (click)="openLocationPriceModal(lp)">
+                                                             Edit
+                                                         </button>
+                                                         <button class="btn btn-sm btn-danger"
+                                                             (click)="deleteLocationPriceById(lp._id)">
+                                                             Delete
+                                                         </button>
+                                                     </td>
+                                                 </tr>
+                                             </tbody>
+                                         </table>
+                                     </div>
+                                 </div>
+                                 <ng-template #noLocationPrices>
+                                     <p class="text-muted mb-4">No location-specific prices set. Click "Add Location Price" to set a base price for a city/state.</p>
+                                 </ng-template>
+
+                                 <!-- Location-wise Zipcode Price Overrides -->
+                                 <h6>Location-wise Zipcode Price Overrides:</h6>
                                 <div *ngIf="taskEditZipcodes.length; else noEditZipcodes">
                                     <div class="table-responsive overflow-auto" style="max-height: 400px;">
 
@@ -413,12 +465,69 @@
                                         No locations/zipcodes associated with this task. Add locations to the task
                                         first.
                                     </div>
-                                </ng-template>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                    (click)="closeTaskEditModal()">Close</button>
-                            </div>
+                                 </ng-template>
+                             </div>
+
+                             <!-- Location Price Edit Modal -->
+                             <div class="modal fade" [class.show]="locationPriceModalOpen"
+                                 [style.display]="locationPriceModalOpen ? 'block' : 'none'" tabindex="-1" aria-hidden="true">
+                                 <div class="modal-dialog modal-dialog-centered">
+                                     <div class="modal-content">
+                                         <div class="modal-header">
+                                             <h5 class="modal-title">
+                                                 Set Location Price - {{ editingLocationPrice?.city }}, {{ editingLocationPrice?.state }} ({{ editingLocationPrice?.type }})
+                                             </h5>
+                                             <button type="button" class="btn-close" aria-label="Close"
+                                                 (click)="closeLocationPriceModal()"></button>
+                                         </div>
+                                     <div class="modal-body" *ngIf="editingLocationPrice">
+                                         <div *ngIf="!editingLocationPrice._id; else editMode">
+                                             <!-- Location Selection for New Location Price -->
+                                             <div class="mb-3">
+                                                 <label class="form-label">Select Location</label>
+                                                 <select class="form-select" [(ngModel)]="editingLocationPrice.selectedLocationId"
+                                                     (change)="onLocationPriceLocationSelect($event)">
+                                                     <option value="">Choose a location...</option>
+                                                     <option *ngFor="let loc of userData?.locations" [value]="loc._id">
+                                                         {{ loc.city }}, {{ loc.state }} ({{ loc.stateShort }}) - {{ loc.type }}
+                                                     </option>
+                                                 </select>
+                                             </div>
+                                         </div>
+                                         <ng-template #editMode>
+                                             <p><strong>Location:</strong> {{ editingLocationPrice.city }}, {{ editingLocationPrice.state }} ({{ editingLocationPrice.type }})</p>
+                                         </ng-template>
+
+                                         <div class="mb-3" [class.hidden]="!editingLocationPrice.city">
+                                             <label class="form-label">Lead Price</label>
+                                             <input type="number" class="form-control"
+                                                 [(ngModel)]="editingLocationPrice.price.lead" />
+                                         </div>
+                                         <div class="mb-3" [class.hidden]="!editingLocationPrice.city">
+                                             <label class="form-label">Call Price</label>
+                                             <input type="number" class="form-control"
+                                                 [(ngModel)]="editingLocationPrice.price.call" />
+                                         </div>
+                                         <div class="mb-3" [class.hidden]="!editingLocationPrice.city">
+                                             <label class="form-label">Appointment Price</label>
+                                             <input type="number" class="form-control"
+                                                 [(ngModel)]="editingLocationPrice.price.appointment" />
+                                         </div>
+                                     </div>
+                                         <div class="modal-footer">
+                                             <button type="button" class="btn btn-secondary"
+                                                 (click)="closeLocationPriceModal()">Cancel</button>
+                                             <button type="button" class="btn btn-primary"
+                                                 (click)="saveLocationPrice()">Save</button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary"
+                                     (click)="closeTaskEditModal()">Close</button>
+                             </div>
                         </div>
                     </div>
                 </div>

@@ -38,12 +38,17 @@ export class User implements OnInit {
     };
     zipcodeOverrides: any[] = [];
 
-    // Task Edit Modal State
-    taskEditModalOpen = false;
-    editingTask: any = null;
-    editingCategory: any = null;
-    editingTaskDefaultPrice: any = { lead: 0, call: 0, appointment: 0 };
-    taskEditZipcodes: any[] = [];
+     // Task Edit Modal State
+     taskEditModalOpen = false;
+     editingTask: any = null;
+     editingCategory: any = null;
+     editingTaskDefaultPrice: any = { lead: 0, call: 0, appointment: 0 };
+     taskEditZipcodes: any[] = [];
+     locationPrices: any[] = [];
+
+     // Location Price Modal State
+     locationPriceModalOpen = false;
+     editingLocationPrice: any = null; // { city, state, type, stateShort, price } // Location-level prices (city/state)
 
     locationSearchQuery = '';
     locationSearchLoading = false;
@@ -395,32 +400,45 @@ export class User implements OnInit {
 
     // ─── Task Edit Modal Methods ──────────────────────────────────
 
-    openTaskEditModal(category: any, task: any) {
-        this.editingCategory = category;
-        this.editingTask = task;
-        this.taskEditModalOpen = true;
+     openTaskEditModal(category: any, task: any) {
+         this.editingCategory = category;
+         this.editingTask = task;
+         this.taskEditModalOpen = true;
 
-        const userId = this.userData?._id;
-        if (!userId) return;
+         const userId = this.userData?._id;
+         if (!userId) return;
 
-        // Set default price from task.price (enriched from Task model)
-        this.editingTaskDefaultPrice = {
-            lead: task.price?.lead ?? 0,
-            call: task.price?.call ?? 0,
-            appointment: task.price?.appointment ?? 0
-        };
+         // Set default price from task.price (enriched from Task model)
+         this.editingTaskDefaultPrice = {
+             lead: task.price?.lead ?? 0,
+             call: task.price?.call ?? 0,
+             appointment: task.price?.appointment ?? 0
+         };
 
-        // Fetch enriched task edit data from backend
-        this.api.getTaskEditData(userId, category.categoryId, task.taskId).subscribe({
-            next: (res: any) => {
-                const data = res?.data;
-                const defaultPrice = data?.defaultPrice || this.editingTaskDefaultPrice;
-                const locationServiceAreas: any[] = data?.locationServiceAreas || [];
-                const userLocations: any[] = data?.userLocations || [];
-                const overrides: any[] = data?.overrides || [];
-                const userServiceAreas: string[] = data?.userServiceAreas || [];
+          this.loadTaskEditData(userId, category, task);
+     }
 
-                this.editingTaskDefaultPrice = defaultPrice;
+       loadTaskEditData(userId: string, category: any, task: any) {
+           // Fetch enriched task edit data from backend
+           this.api.getTaskEditData(userId, category.categoryId, task.taskId).subscribe({
+              next: (res: any) => {
+                 const data = res?.data;
+                 const defaultPrice = data?.defaultPrice || this.editingTaskDefaultPrice;
+                 const locationServiceAreas: any[] = data?.locationServiceAreas || [];
+                 const userLocations: any[] = data?.userLocations || [];
+                 const overrides: any[] = data?.overrides || [];
+                 const userServiceAreas: string[] = data?.userServiceAreas || [];
+                 const locationPrices: any[] = data?.locationPrices || [];
+
+                 this.editingTaskDefaultPrice = defaultPrice;
+                 this.locationPrices = locationPrices;
+
+                 // Build location price map for quick lookup: key = "city-state-type"
+                 const locationPriceMap = new Map<string, any>();
+                 locationPrices.forEach((lp: any) => {
+                     const key = `${lp.city}-${lp.state}-${lp.type}`;
+                     locationPriceMap.set(key, lp.price);
+                 });
 
                 // Build zipcode entries from location service areas
                 this.taskEditZipcodes = [];
@@ -460,74 +478,80 @@ export class User implements OnInit {
                     });
                 });
 
-                // Add user locations that are NOT already in locationServiceAreas
-                userLocations.forEach((loc: any) => {
-                    const locZipcodes: string[] = loc.zipcodes || [];
-                    // Only show zipcodes that match user's service areas
-                    const matchingZips = locZipcodes.filter((z: string) => userServiceAreas.includes(z));
+                 // Add user locations that are NOT already in locationServiceAreas
+                 userLocations.forEach((loc: any) => {
+                     const locZipcodes: string[] = loc.zipcodes || [];
+                     // Only show zipcodes that match user's service areas
+                     const matchingZips = locZipcodes.filter((z: string) => userServiceAreas.includes(z));
 
-                    matchingZips.forEach((zip: string) => {
-                        // Check if user has excluded this zipcode
-                        const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
-                        if (isExcluded) return; // Skip excluded zipcodes
+                     // Get location-level price for this location
+                     const locKey = `${loc.city}-${loc.state}-${loc.type}`;
+                     const locPrice = locationPriceMap.get(locKey);
 
-                        // Skip if already added from task-specific locations
-                        const alreadyAdded = this.taskEditZipcodes.some((e: any) => e.zipcode === zip);
-                        if (alreadyAdded) return;
+                     matchingZips.forEach((zip: string) => {
+                         // Check if user has excluded this zipcode
+                         const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
+                         if (isExcluded) return; // Skip excluded zipcodes
 
-                        const override = overrides.find(
-                            (o: any) => o.zipcode === zip && o.taskId === task.taskId
-                        );
+                         // Skip if already added from task-specific locations
+                         const alreadyAdded = this.taskEditZipcodes.some((e: any) => e.zipcode === zip);
+                         if (alreadyAdded) return;
 
-                        this.taskEditZipcodes.push({
-                            locationId: loc.locationId,
-                            location: loc.location || loc.city || zip,
-                            city: loc.city || '',
-                            state: loc.state || '',
-                            type: loc.type || 'city',
-                            stateShort: loc.stateShort || '',
-                            zipcode: zip,
-                            price: override?.price || defaultPrice,
-                            editLead: override?.price?.lead ?? defaultPrice?.lead ?? 0,
-                            editCall: override?.price?.call ?? defaultPrice?.call ?? 0,
-                            editAppointment: override?.price?.appointment ?? defaultPrice?.appointment ?? 0,
-                            hasOverride: !!override
-                        });
-                    });
-                });
+                         const override = overrides.find(
+                             (o: any) => o.zipcode === zip && o.taskId === task.taskId
+                         );
 
-                // Also include zipcodes from the task itself that may not have locations
-                const taskZipcodes: string[] = task.zipcodes || [];
-                taskZipcodes.forEach((zip: string) => {
-                    // Skip if already added from locations
-                    const alreadyAdded = this.taskEditZipcodes.some((e: any) => e.zipcode === zip);
-                    if (alreadyAdded) return;
+                         this.taskEditZipcodes.push({
+                             locationId: loc.locationId,
+                             location: loc.location || loc.city || zip,
+                             city: loc.city || '',
+                             state: loc.state || '',
+                             type: loc.type || 'city',
+                             stateShort: loc.stateShort || '',
+                             zipcode: zip,
+                             price: override?.price || locPrice || defaultPrice,
+                             editLead: override?.price?.lead ?? locPrice?.lead ?? defaultPrice?.lead ?? 0,
+                             editCall: override?.price?.call ?? locPrice?.call ?? defaultPrice?.call ?? 0,
+                             editAppointment: override?.price?.appointment ?? locPrice?.appointment ?? defaultPrice?.appointment ?? 0,
+                             hasOverride: !!override
+                         });
+                     });
+                 });
 
-                    // Skip if excluded
-                    const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
-                    if (isExcluded) return;
+                 // Also include zipcodes from the task itself that may not have locations
+                 const taskZipcodes: string[] = task.zipcodes || [];
+                 taskZipcodes.forEach((zip: string) => {
+                     // Skip if already added from locations
+                     const alreadyAdded = this.taskEditZipcodes.some((e: any) => e.zipcode === zip);
+                     if (alreadyAdded) return;
 
-                    const override = overrides.find(
-                        (o: any) => o.zipcode === zip && o.taskId === task.taskId
-                    );
+                     // Skip if excluded
+                     const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
+                     if (isExcluded) return;
 
-                    const loc = this.findLocationByZipcode(zip);
+                     const override = overrides.find(
+                         (o: any) => o.zipcode === zip && o.taskId === task.taskId
+                     );
 
-                    this.taskEditZipcodes.push({
-                        locationId: loc?._id || '',
-                        location: loc ? loc.description : zip,
-                        city: loc?.city || '',
-                        state: loc?.state || '',
-                        type: loc?.type || 'zipcode',
-                        stateShort: loc?.stateShort || '',
-                        zipcode: zip,
-                        price: override?.price || defaultPrice,
-                        editLead: override?.price?.lead ?? defaultPrice?.lead ?? 0,
-                        editCall: override?.price?.call ?? defaultPrice?.call ?? 0,
-                        editAppointment: override?.price?.appointment ?? defaultPrice?.appointment ?? 0,
-                        hasOverride: !!override
-                    });
-                });
+                     const loc = this.findLocationByZipcode(zip);
+                     const locKey = loc ? `${loc.city}-${loc.state}-${loc.type || 'city'}` : null;
+                     const locPrice = locKey ? locationPriceMap.get(locKey) : null;
+
+                     this.taskEditZipcodes.push({
+                         locationId: loc?._id || '',
+                         location: loc ? loc.description : zip,
+                         city: loc?.city || '',
+                         state: loc?.state || '',
+                         type: loc?.type || 'zipcode',
+                         stateShort: loc?.stateShort || '',
+                         zipcode: zip,
+                         price: override?.price || locPrice || defaultPrice,
+                         editLead: override?.price?.lead ?? locPrice?.lead ?? defaultPrice?.lead ?? 0,
+                         editCall: override?.price?.call ?? locPrice?.call ?? defaultPrice?.call ?? 0,
+                         editAppointment: override?.price?.appointment ?? locPrice?.appointment ?? defaultPrice?.appointment ?? 0,
+                         hasOverride: !!override
+                     });
+                 });
                 this.cdr.markForCheck();
             },
             error: err => {
@@ -629,9 +653,148 @@ export class User implements OnInit {
                 alert('Unable to save price override');
             }
         });
-    }
+     }
 
-    logout() {
+     // ─── LOCATION PRICE MODAL METHODS ───────────────────────────────
+
+      openLocationPriceModal(location?: any) {
+          // If location is provided with _id, it's editing existing location price
+          // If location is provided without _id (like from table row), it's adding/editing based on city/state/type
+          if (location && location._id) {
+              // Editing existing location price record
+              this.editingLocationPrice = {
+                  _id: location._id,
+                  city: location.city,
+                  state: location.state,
+                  stateShort: location.stateShort || '',
+                  type: location.type,
+                  price: location.price || { lead: 0, call: 0, appointment: 0 },
+                  selectedLocationId: null
+              };
+          } else if (location && location.city) {
+              // Adding from an existing location (from UI like clicking a button in location table)
+              const existing = this.locationPrices.find((lp: any) =>
+                  lp.city === location.city &&
+                  lp.state === location.state &&
+                  lp.type === location.type
+              );
+
+              this.editingLocationPrice = {
+                  _id: existing?._id || '',
+                  city: location.city,
+                  state: location.state,
+                  stateShort: location.stateShort || '',
+                  type: location.type,
+                  price: existing?.price || { lead: 0, call: 0, appointment: 0 },
+                  selectedLocationId: null
+              };
+          } else {
+              // Adding new - start with empty selection
+              this.editingLocationPrice = {
+                  _id: '',
+                  city: '',
+                  state: '',
+                  stateShort: '',
+                  type: 'city',
+                  price: { lead: 0, call: 0, appointment: 0 },
+                  selectedLocationId: ''
+              };
+          }
+
+          this.locationPriceModalOpen = true;
+      }
+
+     closeLocationPriceModal() {
+         this.locationPriceModalOpen = false;
+         this.editingLocationPrice = null;
+     }
+
+     onLocationPriceLocationSelect(event: any) {
+         const locationId = event.target.value;
+         const location = this.userData?.locations?.find((loc: any) => loc._id === locationId);
+         if (location) {
+             this.editingLocationPrice.city = location.city;
+             this.editingLocationPrice.state = location.state;
+             this.editingLocationPrice.stateShort = location.stateShort || '';
+             this.editingLocationPrice.type = location.type || 'city';
+         }
+     }
+
+     saveLocationPrice() {
+         const userId = this.userData?._id;
+         const { categoryId } = this.editingCategory;
+         const { taskId } = this.editingTask;
+         const { city, state, stateShort, type, price } = this.editingLocationPrice;
+
+         if (!city || !state || !type) {
+             alert('Location details are incomplete');
+             return;
+         }
+
+         const payload = {
+             categoryId,
+             taskId,
+             city,
+             state,
+             stateShort,
+             type,
+             price: {
+                 lead: Number(price.lead) || 0,
+                 call: Number(price.call) || 0,
+                 appointment: Number(price.appointment) || 0
+             }
+         };
+
+          this.api.addOrUpdateLocationPrice(userId, payload).subscribe({
+              next: (res: any) => {
+                  // Update local locationPrices list
+                  const existingIndex = this.locationPrices.findIndex((lp: any) =>
+                      lp.city === city && lp.state === state && lp.type === type
+                  );
+
+                  const newLP = res?.data || { ...payload, _id: Date.now().toString() };
+
+                  if (existingIndex > -1) {
+                      this.locationPrices[existingIndex] = newLP;
+                  } else {
+                      this.locationPrices.push(newLP);
+                  }
+
+                  this.closeLocationPriceModal();
+                  alert('Location price saved successfully');
+
+                  // Reload task edit data to refresh effective prices
+                  this.loadTaskEditData(userId, this.editingCategory, this.editingTask);
+              },
+              error: err => {
+                  console.error('Failed to save location price', err);
+                  alert('Unable to save location price');
+              }
+          });
+     }
+
+     deleteLocationPriceById(locationPriceId: string) {
+         if (!confirm('Delete this location price?')) return;
+
+         const userId = this.userData?._id;
+         if (!userId) return;
+
+          this.api.deleteLocationPrice(userId, locationPriceId).subscribe({
+              next: () => {
+                  this.locationPrices = this.locationPrices.filter((lp: any) => lp._id !== locationPriceId);
+                  alert('Location price deleted');
+
+                  // Reload task edit data to refresh effective prices
+                  this.loadTaskEditData(userId, this.editingCategory, this.editingTask);
+              },
+             error: err => {
+                 console.error('Failed to delete location price', err);
+                 alert('Unable to delete location price');
+             }
+         });
+     }
+
+     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
         this.router.navigate(['/login']);

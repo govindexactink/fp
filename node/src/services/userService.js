@@ -1,5 +1,6 @@
 const User = require("../model/userModel");
 const ZipcodeOverride = require("../model/zipcodePriceOverrideModel");
+const LocationPrice = require("../model/locationPriceModel");
 const Task = require("../model/taskModel");
 const jwt = require("jsonwebtoken");
 const { resolveLocationZipcodes } = require("./locationService");
@@ -346,6 +347,55 @@ const deleteZipcodePriceOverride = async (userId, overrideId) => {
   return { message: "Override deleted successfully" };
 };
 
+// ─── LOCATION PRICE SERVICES ───────────────────────────────────────
+
+const addOrUpdateLocationPrice = async (userId, locationPriceData) => {
+  const { categoryId, taskId, city, state, stateShort, type, price } = locationPriceData;
+
+  if (!city || !state || !type || !price) {
+    throw { status: 400, message: "City, state, type, and price are required" };
+  }
+
+  const query = {
+    userId,
+    city,
+    state,
+    type,
+    ...(categoryId ? { categoryId } : {}),
+    ...(taskId ? { taskId } : {}),
+  };
+
+  const update = {
+    userId,
+    categoryId,
+    taskId,
+    city,
+    state,
+    stateShort: stateShort || '',
+    type,
+    price,
+  };
+
+  const result = await LocationPrice.findOneAndUpdate(query, update, {
+    new: true,
+    upsert: true,
+    runValidators: true,
+  });
+
+  return result;
+};
+
+const getLocationPrices = async (userId, filter = {}) => {
+  const query = { userId, ...filter };
+  return LocationPrice.find(query).lean();
+};
+
+const deleteLocationPrice = async (userId, locationPriceId) => {
+  const doc = await LocationPrice.findOneAndDelete({ _id: locationPriceId, userId });
+  if (!doc) throw { status: 404, message: "Location price not found" };
+  return { message: "Location price deleted successfully" };
+};
+
 // ─── QUERY SERVICES ─────────────────────────────────────────────
 
 const getCheckedTasksWithFilters = async (userId) => {
@@ -406,14 +456,26 @@ const getTaskEditData = async (userId, categoryId, taskId) => {
       ? taskDoc.price[0]
       : { lead: 0, call: 0, appointment: 0 };
 
-  // 3. Is task ke liye zipcode overrides fetch karo aur ek map banao
-  const overridesDocs = await ZipcodeOverride.find({ userId, categoryId, taskId }).lean();
-  const overridesMap = {};
-  overridesDocs.forEach((o) => {
-    overridesMap[o.zipcode] = o.price;
-  });
+   // 3. Is task ke liye zipcode overrides fetch karo aur ek map banao
+   const overridesDocs = await ZipcodeOverride.find({ userId, categoryId, taskId }).lean();
+   const overridesMap = {};
+   overridesDocs.forEach((o) => {
+     overridesMap[o.zipcode] = o.price;
+   });
 
-  // 4. Har user location ke liye:
+   // 3.5 Fetch location prices (city/state level)
+   const locationPriceDocs = await LocationPrice.find({
+     userId,
+     categoryId,
+     taskId
+   }).lean();
+   const locationPriceMap = {};
+   locationPriceDocs.forEach((lp) => {
+     const key = `${lp.city}-${lp.state}-${lp.type}`;
+     locationPriceMap[key] = lp.price;
+   });
+
+   // 4. Har user location ke liye:
   //    a) Zipcode DB se resolve karo (city/state query)
   //    b) Sirf wahi rakho jo service area mein hain aur excluded nahi hain
   //    c) Har zipcode ke liye price lagao: override > defaultPrice
@@ -427,10 +489,15 @@ const getTaskEditData = async (userId, categoryId, taskId) => {
         (z) => serviceAreaSet.has(z) && !excludedSet.has(z)
       );
 
+      // Location-level price (city/state)
+      const locationKey = `${loc.city}-${loc.state}-${loc.type}`;
+      const locationPrice = locationPriceMap[locationKey];
+
       // Har zipcode ke liye price map
+      // Priority: zipcode override > location price > default task price
       const serviceAreaPrices = {};
       filteredZipcodes.forEach((zip) => {
-        serviceAreaPrices[zip] = overridesMap[zip] || defaultPrice;
+        serviceAreaPrices[zip] = overridesMap[zip] || locationPrice || defaultPrice;
       });
 
       return {
@@ -457,16 +524,17 @@ const getTaskEditData = async (userId, categoryId, taskId) => {
       )
       : enrichedLocations;
 
-  return {
-    userId,
-    categoryId,
-    taskId,
-    defaultPrice,
-    locationServiceAreas,
-    userLocations: enrichedLocations,
-    overrides: overridesDocs,
-    userServiceAreas: user.service_areas_zipcodes || [],
-  };
+   return {
+     userId,
+     categoryId,
+     taskId,
+     defaultPrice,
+     locationServiceAreas,
+     userLocations: enrichedLocations,
+     locationPrices: locationPriceDocs,
+     overrides: overridesDocs,
+     userServiceAreas: user.service_areas_zipcodes || [],
+   };
 };
 
 // ─── HELPERS ────────────────────────────────────────────────────
@@ -485,6 +553,7 @@ module.exports = {
   addFilter, updateFilter, toggleFilterChecked, deleteFilter,
   addLocation, updateLocation, deleteLocation,
   addOrUpdateZipcodePriceOverride, getZipcodePriceOverrides, deleteZipcodePriceOverride,
+  addOrUpdateLocationPrice, getLocationPrices, deleteLocationPrice,
   getCheckedTasksWithFilters, getTotalPrice, updateUnselectedZipcodes,
   getTaskEditData,
 };

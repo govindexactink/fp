@@ -79,6 +79,14 @@ userRouter.get("/:userId/zipcode-prices", protect, ctrl.getZipcodePriceOverrides
 userRouter.post("/:userId/zipcode-prices", protect, ctrl.addZipcodePriceOverride);
 userRouter.delete("/:userId/zipcode-prices/:overrideId", protect, ctrl.deleteZipcodePriceOverride);
 
+// ─── LOCATION PRICE ROUTES ────────────────────────────────────────
+// GET /api/users/:userId/location-prices
+// POST /api/users/:userId/location-prices
+// DELETE /api/users/:userId/location-prices/:locationPriceId
+userRouter.get("/:userId/location-prices", protect, ctrl.getLocationPrices);
+userRouter.post("/:userId/location-prices", protect, ctrl.addOrUpdateLocationPrice);
+userRouter.delete("/:userId/location-prices/:locationPriceId", protect, ctrl.deleteLocationPrice);
+
 // ─── QUERY ROUTES ────────────────────────────────────────────────
 // GET /api/users/:userId/checked-tasks
 // GET /api/users/:userId/total-price
