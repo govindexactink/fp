@@ -44,6 +44,7 @@
                                     <h5 class="mb-1">{{ loc.description }}</h5>
                                     <p class="mb-1">
                                         <strong>City:</strong> {{ loc.city }}, <strong>State:</strong> {{ loc.state }}
+                                        ({{ loc.stateShort }})
                                         <span *ngIf="loc.country">, {{ loc.country }}</span>
                                     </p>
                                 </div>
@@ -185,7 +186,7 @@
                                         <li *ngFor="let loc of filteredLocations"
                                             class="list-group-item list-group-item-action" style="cursor:pointer"
                                             (click)="selectLocation(loc)">
-                                            {{ loc.location }} — {{ loc.city }}, {{ loc.state }}
+                                            {{ loc.location }} — {{ loc.city }}, {{ loc.state }} ({{ loc.stateShort }})
                                         </li>
                                     </ul>
                                 </div>
@@ -193,7 +194,8 @@
                                     class="alert alert-success d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>{{ selectedLocation.location }}</strong><br />
-                                        <small>{{ selectedLocation.city }}, {{ selectedLocation.state }}
+                                        <small>{{ selectedLocation.city }}, {{ selectedLocation.state }} ({{
+                                            selectedLocation.stateShort }})
                                             {{ selectedLocation.country ? '(' + selectedLocation.country + ')' : ''
                                             }}</small>
                                     </div>
@@ -203,7 +205,8 @@
                                 <div *ngIf="selectedLocation">
                                     <div class="mb-3">
                                         <p class="mb-1"><strong>Selected:</strong> {{ selectedLocation.location }}</p>
-                                        <p class="mb-0">{{ selectedLocation.city }}, {{ selectedLocation.state }} {{
+                                        <p class="mb-0">{{ selectedLocation.city }}, {{ selectedLocation.state }} ({{
+                                            selectedLocation.stateShort }}) {{
                                             selectedLocation.country ? '(' + selectedLocation.country + ')' : '' }}</p>
                                     </div>
                                 </div>
@@ -335,17 +338,17 @@
                                 <!-- Default Task Price (from Task model) -->
                                 <h6>Default Task Price (from Task table):</h6>
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label">Lead Price</label>
                                         <input type="number" class="form-control"
                                             [ngModel]="editingTaskDefaultPrice?.lead ?? 0" disabled />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label">Call Price</label>
                                         <input type="number" class="form-control"
                                             [ngModel]="editingTaskDefaultPrice?.call ?? 0" disabled />
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label">Appointment Price</label>
                                         <input type="number" class="form-control"
                                             [ngModel]="editingTaskDefaultPrice?.appointment ?? 0" disabled />
@@ -357,13 +360,15 @@
                                 <!-- Location-wise Zipcode Price Overrides -->
                                 <h6>Location-wise Zipcode Price Overrides:</h6>
                                 <div *ngIf="taskEditZipcodes.length; else noEditZipcodes">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive overflow-auto" style="max-height: 400px;">
+
                                         <table class="table table-sm table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th>Location</th>
                                                     <th>City</th>
                                                     <th>State</th>
+                                                    <th>State Short</th>
                                                     <th>Type</th>
                                                     <th>Zipcode</th>
                                                     <th>Lead Price</th>
@@ -377,6 +382,7 @@
                                                     <td>{{ loc.location }}</td>
                                                     <td>{{ loc.city }}</td>
                                                     <td>{{ loc.state }}</td>
+                                                    <td>{{ loc.stateShort }}</td>
                                                     <td>{{ loc.type }}</td>
                                                     <td>{{ loc.zipcode }}</td>
                                                     <td>

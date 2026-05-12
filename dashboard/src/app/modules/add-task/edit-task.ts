@@ -330,7 +330,7 @@ export class EditTask implements OnInit {
               location: [item.location || ''],
               city: [item.city || ''],
               state: [item.state || ''],
-              stateShort: [item.stateShort || item.stateShort || ''],
+               stateShort: [item.stateShort || ''],
               type: [item.type || ''],
               zipcodes: [zipcodes],
               lead: [price.lead || 0],

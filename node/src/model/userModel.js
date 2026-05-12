@@ -31,24 +31,25 @@ const categorySchema = new mongoose.Schema({
   tasks: [taskSchema],
 });
 
-const LocationSchema = new mongoose.Schema({
-  description: { type: String, required: true, trim: true },
-  city: { type: String, default: '', trim: true },
-  state: { type: String, default: '', trim: true },
-  country: { type: String, default: '', trim: true },
-  zipcode: { type: String, default: null, trim: true },
-  zipcodes: {
-    type: [String],
-    default: []
-  },
-  type: {
-    type: String,
-    enum: ['city', 'state', 'zipcode', 'country', 'radius'],
-    required: true
-  },
-  radius: { type: Number, default: null },   // numeric radius, e.g. 20
-  unit: { type: String, default: null },     // e.g. "Miles"
-});
+ const LocationSchema = new mongoose.Schema({
+   description: { type: String, required: true, trim: true },
+   city: { type: String, default: '', trim: true },
+   state: { type: String, default: '', trim: true },
+   stateShort: { type: String, default: '', trim: true },
+   country: { type: String, default: '', trim: true },
+   zipcode: { type: String, default: null, trim: true },
+   zipcodes: {
+     type: [String],
+     default: []
+   },
+   type: {
+     type: String,
+     enum: ['city', 'state', 'zipcode', 'country', 'radius'],
+     required: true
+   },
+   radius: { type: Number, default: null },   // numeric radius, e.g. 20
+   unit: { type: String, default: null },     // e.g. "Miles"
+ });
 
 
 
