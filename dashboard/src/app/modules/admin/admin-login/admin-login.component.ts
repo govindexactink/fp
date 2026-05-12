@@ -67,7 +67,9 @@ export class AdminLoginComponent {
         if (res.success) {
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('role', 'admin');
-          this.router.navigate(['/admin/dashboard']);
+          // this.router.navigate(['/']);
+          // this.router.navigate(['/admin/dashboard']);
+          this.router.navigate(['/admin-users']);
         }
       },
       error: (err: any) => {

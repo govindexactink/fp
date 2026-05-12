@@ -46,12 +46,12 @@ export class User implements OnInit {
     taskEditZipcodes: any[] = [];
     locationPrices: any[] = [];
 
-     // Location Price Modal State
-     locationPriceModalOpen = false;
-     editingLocationPrice: any = null; // { city, state, type, stateShort, price } // Location-level prices (city/state)
+    // Location Price Modal State
+    locationPriceModalOpen = false;
+    editingLocationPrice: any = null; // { city, state, type, stateShort, price } // Location-level prices (city/state)
 
-     // Admin impersonation flag: true if current user is being viewed by an admin
-     isAdminImpersonating = false;
+    // Admin impersonation flag: true if current user is being viewed by an admin
+    isAdminImpersonating = false;
 
     locationSearchQuery = '';
     locationSearchLoading = false;
@@ -65,78 +65,78 @@ export class User implements OnInit {
     categorySearchQuery = '';
     filteredCategories: any[] = [];
 
-     constructor(
-         private router: Router,
-         private api: Api,
-         private cdr: ChangeDetectorRef
-     ) { }
+    constructor(
+        private router: Router,
+        private api: Api,
+        private cdr: ChangeDetectorRef
+    ) { }
 
-     ngOnInit() {
-         this.detectImpersonation();
-         this.loadUserData();
-     }
+    ngOnInit() {
+        this.detectImpersonation();
+        this.loadUserData();
+    }
 
-     detectImpersonation() {
-         const token = localStorage.getItem('token');
-         if (token) {
-             try {
-                 const payload = token.split('.')[1];
-                 let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-                 while (base64.length % 4) {
-                     base64 += '=';
-                 }
-                 const decoded = atob(base64);
-                 const parsed = JSON.parse(decoded);
-                 this.isAdminImpersonating = !!parsed.impersonatedBy;
-             } catch (e) {
-                 this.isAdminImpersonating = false;
-             }
-         }
-     }
+    detectImpersonation() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const payload = token.split('.')[1];
+                let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+                while (base64.length % 4) {
+                    base64 += '=';
+                }
+                const decoded = atob(base64);
+                const parsed = JSON.parse(decoded);
+                this.isAdminImpersonating = !!parsed.impersonatedBy;
+            } catch (e) {
+                this.isAdminImpersonating = false;
+            }
+        }
+    }
 
-     exitImpersonation() {
-         const adminToken = sessionStorage.getItem('adminToken');
-         if (!adminToken) {
-             alert('Admin session not found. Please log in again as admin.');
-             this.logout(); // fallback
-             return;
-         }
+    exitImpersonation() {
+        const adminToken = sessionStorage.getItem('adminToken');
+        if (!adminToken) {
+            alert('Admin session not found. Please log in again as admin.');
+            this.logout(); // fallback
+            return;
+        }
 
-         const adminId = this.getAdminIdFromToken(adminToken);
-         if (!adminId) {
-             alert('Invalid admin token');
-             return;
-         }
+        const adminId = this.getAdminIdFromToken(adminToken);
+        if (!adminId) {
+            alert('Invalid admin token');
+            return;
+        }
 
-         // Temporarily use admin token
-         const originalToken = localStorage.getItem('token');
-         localStorage.setItem('token', adminToken);
-         localStorage.setItem('role', 'admin');
+        // Temporarily use admin token
+        const originalToken = localStorage.getItem('token');
+        localStorage.setItem('token', adminToken);
+        localStorage.setItem('role', 'admin');
 
-         this.api.exitImpersonation(adminId, this.userData._id).subscribe({
-             next: (res: any) => {
-                 if (res.success) {
-                     alert('Exited impersonation. Returning to admin dashboard.');
-                     sessionStorage.removeItem('adminToken');
-                     this.router.navigate(['/admin/dashboard']);
-                 }
-             },
-             error: (err: any) => {
-                 // Restore original token on error
-                 localStorage.setItem('token', originalToken || '');
-                 alert('Failed to exit impersonation: ' + (err.error?.message || 'Unknown error'));
-             }
-         });
-     }
+        this.api.exitImpersonation(adminId, this.userData._id).subscribe({
+            next: (res: any) => {
+                if (res.success) {
+                    alert('Exited impersonation. Returning to admin dashboard.');
+                    sessionStorage.removeItem('adminToken');
+                    this.router.navigate(['/']);
+                }
+            },
+            error: (err: any) => {
+                // Restore original token on error
+                localStorage.setItem('token', originalToken || '');
+                alert('Failed to exit impersonation: ' + (err.error?.message || 'Unknown error'));
+            }
+        });
+    }
 
-     private getAdminIdFromToken(token: string): string | null {
-         try {
-             const payload = JSON.parse(atob(token.split('.')[1]));
-             return payload.id || payload.userId || null;
-         } catch (e) {
-             return null;
-         }
-     }
+    private getAdminIdFromToken(token: string): string | null {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.id || payload.userId || null;
+        } catch (e) {
+            return null;
+        }
+    }
 
     loadUserData() {
         this.loading = true;
