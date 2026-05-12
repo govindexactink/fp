@@ -36,11 +36,10 @@ const registerUser = async (data) => {
 
 const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email }).select("+password");
-  // if (!user || !(await user.comparePassword(password))) {
-  //   throw { status: 401, message: "Invalid email or password" };
-  // }  
-  console.log("JWT_SECRET", JWT_SECRET)
-  console.log("JWT_EXPIRES", JWT_EXPIRES)
+  console.log("user", user);
+  if (!user || user.password !== password) {
+    throw { status: 401, message: "Invalid email or password" };
+  }
   const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
   return { user: sanitizeUser(user), token };
 };
