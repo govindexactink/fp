@@ -1,7 +1,7 @@
 const express = require("express");
 const userRouter = express.Router();
 const ctrl = require("../controller/user");
-const { protect } = require("../middleware/auth");
+const { protect, adminOnly } = require("../middleware/auth");
 
 // ─── AUTH ROUTES ─────────────────────────────────────────────────
 // POST /api/users/register
@@ -9,10 +9,20 @@ const { protect } = require("../middleware/auth");
 userRouter.post("/register", ctrl.register);
 userRouter.post("/login", ctrl.login);
 
+// ─── ADMIN ROUTES ──────────────────────────────────────────────────
+// POST /api/users/admin/login
+userRouter.post("/admin/login", ctrl.adminLogin);
+// POST /api/users/:adminId/impersonate/:userId
+userRouter.post("/:adminId/impersonate/:userId", protect, adminOnly, ctrl.impersonateUser);
+// DELETE /api/users/:adminId/exit-impersonation/:userId
+userRouter.delete("/:adminId/exit-impersonation/:userId", protect, adminOnly, ctrl.exitImpersonation);
+// GET /api/users/locked-users
+userRouter.get("/locked-users", protect, adminOnly, ctrl.getLockedUsers);
+
 // GET /api/users/profile (current user)
 userRouter.get("/profile", protect, ctrl.getProfile);
 
-// ─── USER ROUTES ─────────────────────────────────────────────────
+// ─── USER ROUTES ──────────────────────────────────────────────────
 // GET    /api/users/
 // GET    /api/users/:userId
 // PUT    /api/users/:userId

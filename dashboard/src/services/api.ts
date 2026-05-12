@@ -138,6 +138,28 @@ export class Api {
       return this.http.post(`${this.baseUrl}/user/login`, data);
    }
 
+   adminLogin(data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/user/admin/login`, data);
+   }
+
+    impersonateUser(adminId: string, userId: string): Observable<any> {
+       return this.http.post(`${this.baseUrl}/user/${adminId}/impersonate/${userId}`, {}, {
+          headers: this.getAuthHeaders()
+       });
+    }
+
+    exitImpersonation(adminId: string, userId: string): Observable<any> {
+       return this.http.delete(`${this.baseUrl}/user/${adminId}/exit-impersonation/${userId}`, {
+          headers: this.getAuthHeaders()
+       });
+    }
+
+    getLockedUsers(): Observable<any> {
+       return this.http.get(`${this.baseUrl}/user/locked-users`, {
+          headers: this.getAuthHeaders()
+       });
+    }
+
    getUserProfile(): Observable<any> {
       return this.http.get(`${this.baseUrl}/user/profile`, {
          headers: this.getAuthHeaders()
@@ -167,6 +189,7 @@ export class Api {
          headers: this.getAuthHeaders()
       });
    }
+
    getTaskEditData(userId: string, categoryId: string, taskId: string): Observable<any> {
       return this.http.get(`${this.baseUrl}/user/${userId}/task-edit-data`, {
          headers: this.getAuthHeaders(),

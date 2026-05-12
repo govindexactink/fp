@@ -10,8 +10,24 @@ import { noAuthGuard } from './no-auth.guard';
 import { User } from './modules/user/user';
 import { AdminUsers } from './modules/admin-users/admin-users';
 import { AddCategory } from './modules/add-category/add-category';
+import { AdminLoginComponent } from './modules/admin/admin-login/admin-login.component';
+import { AdminDashboardComponent } from './modules/admin/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
+    // AUTH
+    { path: 'login', component: Login, canActivate: [noAuthGuard] },
+    { path: 'register', component: Signup, canActivate: [noAuthGuard] },
+    { path: 'admin/login', component: AdminLoginComponent, canActivate: [noAuthGuard] },
+
+    // ADMIN ROUTES
+    {
+        path: 'admin/dashboard',
+        component: AdminDashboardComponent,
+        canActivate: [authGuard],
+        data: { role: 'admin' }
+    },
+
+    // ─── EXISTING ROUTES ──────────────────────────────────────────────
     {
         path: 'categories',
         component: Categories,
@@ -50,10 +66,6 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { role: 'user' }
     },
-
-    // AUTH
-    { path: 'login', component: Login, canActivate: [noAuthGuard] },
-    { path: 'register', component: Signup, canActivate: [noAuthGuard] },
 
     // DEFAULT REDIRECT
     { path: '', redirectTo: 'login', pathMatch: 'full' }

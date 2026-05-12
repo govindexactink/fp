@@ -246,6 +246,33 @@ exports.getTaskEditData = globle.asyncHandler(async (req, res) => {
   globle.sendResponse(res, 200, "Task edit data fetched", data);
 });
 
+// ─── ADMIN SERVICES ───────────────────────────────────────────────
+
+exports.adminLogin = globle.asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const result = await userService.adminLogin({ email, password });
+  globle.sendResponse(res, 200, "Admin login successful", result);
+});
+
+exports.impersonateUser = globle.asyncHandler(async (req, res) => {
+  const adminId = req.user; // from auth middleware (protect sets req.user)
+  const { userId } = req.params;
+  const result = await userService.impersonateUser(adminId, userId);
+  globle.sendResponse(res, 200, "User impersonation started", result);
+});
+
+exports.exitImpersonation = globle.asyncHandler(async (req, res) => {
+  const adminId = req.user;
+  const { userId } = req.params;
+  const result = await userService.exitImpersonation(userId, adminId);
+  globle.sendResponse(res, 200, result.message);
+});
+
+exports.getLockedUsers = globle.asyncHandler(async (req, res) => {
+  const result = await userService.getLockedUsers();
+  globle.sendResponse(res, 200, 'Locked users fetched', result);
+});
+
 // ─── QUERY ───────────────────────────────────────────────────────
 
 exports.getCheckedTasksWithFilters = globle.asyncHandler(async (req, res) => {

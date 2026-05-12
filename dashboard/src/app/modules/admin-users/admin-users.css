@@ -117,16 +117,26 @@
     color: #166534;
 }
 
-.badge-pending {
-    background: #fef3c7;
-    color: #92400e;
-}
+ .badge-pending {
+     background: #fef3c7;
+     color: #92400e;
+ }
 
-.status-display {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+ .badge-locked {
+     background: #fee2e2;
+     color: #991b1b;
+ }
+
+ .badge-unlocked {
+     background: #dcfce7;
+     color: #166534;
+ }
+
+ .status-display {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+ }
 
 .status-edit {
     display: flex;
@@ -202,6 +212,38 @@
     transition: background 0.2s;
 }
 
-.btn-delete:hover {
-    background: #dc2626;
-}
+ .btn-delete:hover {
+     background: #dc2626;
+ }
+
+ .btn-impersonate {
+     background: #3b82f6;
+     color: white;
+     border: none;
+     padding: 6px 12px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-size: 12px;
+     font-weight: 500;
+     transition: background 0.2s;
+ }
+
+ .btn-impersonate:hover {
+     background: #2563eb;
+ }
+
+ .btn-unlock {
+     background: #10b981;
+     color: white;
+     border: none;
+     padding: 6px 12px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-size: 12px;
+     font-weight: 500;
+     transition: background 0.2s;
+ }
+
+ .btn-unlock:hover {
+     background: #059669;
+ }

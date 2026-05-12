@@ -48,11 +48,13 @@ const loginUser = async ({ email, password }) => {
 // ─── USER SERVICES ──────────────────────────────────────────────
 
 const getAllUsers = async () => {
-  return User.find({ isActive: true }).select("-__v");
+  return User.find({ isActive: true })
+    .select("-__v -password")
+    .populate('lockedByAdmin', 'username email');
 };
 
 const getUserById = async (userId) => {
-  const user = await User.findById(userId).select("-__v");
+  const user = await User.findById(userId).select("-__v -password");
   if (!user) throw { status: 404, message: "User not found" };
   const userObj = user.toObject();
 
@@ -465,26 +467,26 @@ const getTaskEditData = async (userId, categoryId, taskId) => {
       ? taskDoc.price[0]
       : { lead: 0, call: 0, appointment: 0 };
 
-   // 3. Is task ke liye zipcode overrides fetch karo aur ek map banao
-   const overridesDocs = await ZipcodeOverride.find({ userId, categoryId, taskId }).lean();
-   const overridesMap = {};
-   overridesDocs.forEach((o) => {
-     overridesMap[o.zipcode] = o.price;
-   });
+  // 3. Is task ke liye zipcode overrides fetch karo aur ek map banao
+  const overridesDocs = await ZipcodeOverride.find({ userId, categoryId, taskId }).lean();
+  const overridesMap = {};
+  overridesDocs.forEach((o) => {
+    overridesMap[o.zipcode] = o.price;
+  });
 
-   // 3.5 Fetch location prices (city/state level)
-   const locationPriceDocs = await LocationPrice.find({
-     userId,
-     categoryId,
-     taskId
-   }).lean();
-   const locationPriceMap = {};
-   locationPriceDocs.forEach((lp) => {
-     const key = `${lp.city}-${lp.state}-${lp.type}`;
-     locationPriceMap[key] = lp.price;
-   });
+  // 3.5 Fetch location prices (city/state level)
+  const locationPriceDocs = await LocationPrice.find({
+    userId,
+    categoryId,
+    taskId
+  }).lean();
+  const locationPriceMap = {};
+  locationPriceDocs.forEach((lp) => {
+    const key = `${lp.city}-${lp.state}-${lp.type}`;
+    locationPriceMap[key] = lp.price;
+  });
 
-   // 4. Har user location ke liye:
+  // 4. Har user location ke liye:
   //    a) Zipcode DB se resolve karo (city/state query)
   //    b) Sirf wahi rakho jo service area mein hain aur excluded nahi hain
   //    c) Har zipcode ke liye price lagao: override > defaultPrice
@@ -533,17 +535,110 @@ const getTaskEditData = async (userId, categoryId, taskId) => {
       )
       : enrichedLocations;
 
-   return {
-     userId,
-     categoryId,
-     taskId,
-     defaultPrice,
-     locationServiceAreas,
-     userLocations: enrichedLocations,
-     locationPrices: locationPriceDocs,
-     overrides: overridesDocs,
-     userServiceAreas: user.service_areas_zipcodes || [],
-   };
+  return {
+    userId,
+    categoryId,
+    taskId,
+    defaultPrice,
+    locationServiceAreas,
+    userLocations: enrichedLocations,
+    locationPrices: locationPriceDocs,
+    overrides: overridesDocs,
+    userServiceAreas: user.service_areas_zipcodes || [],
+  };
+};
+
+// ─── ADMIN SERVICES ────────────────────────────────────────────────
+
+const adminLogin = async ({ email, password }) => {
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) throw { status: 401, message: "Invalid credentials" };
+
+  // DEBUG: Log user role
+  console.log("Admin login attempt for user:", email, "Role in DB:", user.role);
+
+  // Check if user is an admin
+  if (user.role !== 'admin') {
+    console.log("Access denied: User is not an admin");
+    throw { status: 403, message: "Access denied. Admin privileges required." };
+  }
+
+  // Password check commented for dev (bcrypt not set up)
+  // const isPasswordValid = await user.comparePassword(password);
+  // if (!isPasswordValid) {
+  //   throw { status: 401, message: "Invalid credentials" };
+  // }
+
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES }
+  );
+
+  console.log("Admin token generated with role:", user.role);
+  return { user: sanitizeUser(user), token };
+};
+
+const impersonateUser = async (adminId, userId) => {
+  // Verify admin exists
+  console.log("Admin ID for impersonation:", adminId);
+  const admin = await User.findById(adminId);
+  console.log("admin:", admin);
+  if (!admin || admin.role !== 'admin') {
+    throw { status: 403, message: "Only admins can impersonate users" };
+  }
+
+  // Verify user exists
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+
+  // Set admin login flag on user
+  user.isAdminLogin = true;
+  user.lockedByAdmin = adminId;
+  user.lockedAt = new Date();
+  await user.save();
+
+  // Generate token for user (not admin)
+  const token = jwt.sign(
+    { id: user._id, role: 'user', impersonatedBy: adminId },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES }
+  );
+
+  return { user: sanitizeUser(user), token };
+};
+
+const exitImpersonation = async (userId, adminId) => {
+  // Verify admin exists
+  const admin = await User.findById(adminId);
+  if (!admin || admin.role !== 'admin') {
+    throw { status: 403, message: "Only admins can exit impersonation" };
+  }
+
+  // Verify user exists and is currently impersonated
+  const user = await User.findById(userId);
+  if (!user) throw { status: 404, message: "User not found" };
+
+  if (!user.isAdminLogin) {
+    throw { status: 400, message: "User is not currently being impersonated" };
+  }
+
+  // Clear admin login flag
+  user.isAdminLogin = false;
+  user.lockedByAdmin = null;
+  user.lockedAt = null;
+  await user.save();
+
+  return { message: "Impersonation ended successfully" };
+};
+
+const getLockedUsers = async () => {
+  // Get all users that are currently locked by admin
+  const users = await User.find({ isAdminLogin: true, role: 'user' })
+    .populate('lockedByAdmin', 'username email')
+    .select('-password')
+    .lean();
+  return users;
 };
 
 // ─── HELPERS ────────────────────────────────────────────────────
@@ -565,4 +660,5 @@ module.exports = {
   addOrUpdateLocationPrice, getLocationPrices, deleteLocationPrice,
   getCheckedTasksWithFilters, getTotalPrice, updateUnselectedZipcodes,
   getTaskEditData,
+  adminLogin, impersonateUser, exitImpersonation, getLockedUsers,
 };
