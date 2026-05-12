@@ -273,6 +273,33 @@ const deleteLocation = async (userId, locationId) => {
   if (!user) throw { status: 404, message: "User not found" };
   const location = user.locations.id(locationId);
   if (!location) throw { status: 404, message: "Location not found" };
+
+  // Resolve all zipcodes for this location (city/state) from Zipcode collection
+  const locationZipcodes = await resolveLocationZipcodes(location);
+
+  // Remove these zipcodes from service_areas_zipcodes
+  if (locationZipcodes.length > 0) {
+    user.service_areas_zipcodes = user.service_areas_zipcodes.filter(
+      (zip) => !locationZipcodes.includes(zip)
+    );
+  }
+
+  // Remove these zipcodes from unselected_zipcodes
+  if (locationZipcodes.length > 0) {
+    user.unselected_zipcodes = user.unselected_zipcodes.filter(
+      (zip) => !locationZipcodes.includes(zip)
+    );
+  }
+
+  // Delete all zipcode price overrides for these zipcodes
+  if (locationZipcodes.length > 0) {
+    await ZipcodeOverride.deleteMany({
+      userId,
+      zipcode: { $in: locationZipcodes }
+    });
+  }
+
+  // Delete the location
   location.deleteOne();
   await user.save();
   return { message: "Location deleted successfully" };
@@ -426,8 +453,8 @@ const getTaskEditData = async (userId, categoryId, taskId) => {
   const locationServiceAreas =
     taskZipcodes.length > 0
       ? enrichedLocations.filter((loc) =>
-          loc.zipcodes.some((z) => taskZipcodes.includes(z))
-        )
+        loc.zipcodes.some((z) => taskZipcodes.includes(z))
+      )
       : enrichedLocations;
 
   return {
