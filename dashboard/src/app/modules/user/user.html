@@ -303,6 +303,65 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Category Modal -->
+                <div class="modal fade" [class.show]="showCategoryModal"
+                    [style.display]="showCategoryModal ? 'block' : 'none'" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Category</h5>
+                                <button type="button" class="btn-close" aria-label="Close"
+                                    (click)="closeCategoryModal()"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Search Category</label>
+                                    <input type="text" class="form-control" placeholder="Type category name..."
+                                        [(ngModel)]="categorySearchQuery" (input)="onCategorySearch()" />
+                                    <ul class="list-group mt-1" *ngIf="filteredCategories?.length && !selectedCategory">
+                                        <li *ngFor="let cat of filteredCategories"
+                                            class="list-group-item list-group-item-action" style="cursor:pointer"
+                                            (click)="selectCategory(cat)">
+                                            {{ cat.name }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="selectedCategory"
+                                    class="alert alert-success d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ selectedCategory.name }}</strong>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" (click)="clearSelectedCategory()">✕
+                                        Change</button>
+                                </div>
+                                <div *ngIf="selectedCategory && selectedTasks.length">
+                                    <h6>Select Tasks:</h6>
+                                    <div class="mb-2">
+                                        <div *ngFor="let task of selectedTasks" class="form-check">
+                                            <input class="form-check-input" type="checkbox" [id]="'task-' + task.taskId"
+                                                [(ngModel)]="task.checked" (change)="toggleTask(task)" />
+                                            <label class="form-check-label" [for]="'task-' + task.taskId">
+                                                {{ task.taskName }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="categoryModalError" class="alert alert-danger mt-3">
+                                    {{ categoryModalError }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    (click)="closeCategoryModal()">Cancel</button>
+                                <button type="button" class="btn btn-primary" (click)="saveCategory()"
+                                    [disabled]="!selectedCategory || !selectedTasks.some(t => t.checked)">
+                                    Add Category
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </ng-template>

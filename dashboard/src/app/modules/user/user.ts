@@ -40,7 +40,14 @@ export class User implements OnInit {
     locationSearchQuery = '';
     locationSearchLoading = false;
     filteredLocations: any[] = [];
-    // private locationSearchTimeout: any = null;
+
+    showCategoryModal = false;
+    availableCategories: any[] = [];
+    selectedCategory: any = null;
+    selectedTasks: any[] = [];
+    categoryModalError = '';
+    categorySearchQuery = '';
+    filteredCategories: any[] = [];
 
     constructor(
         private router: Router,
@@ -260,15 +267,20 @@ export class User implements OnInit {
     }
 
     addCategory() {
-        const name = prompt('Enter category name');
-        if (!name || !name.trim()) return;
-        const category = {
-            categoryId: 'CAT-' + Date.now(),
-            categoryName: name.trim(),
-            tasks: []
-        };
-        this.userData.categories = [...this.userData.categories, category];
-        this.saveUserFields({ categories: this.userData.categories });
+        this.showCategoryModal = true;
+        this.categoryModalError = '';
+        this.selectedCategory = null;
+        this.selectedTasks = [];
+        this.categorySearchQuery = '';
+        this.filteredCategories = [];
+        if (!this.availableCategories.length) {
+            this.api.getCategories().subscribe({
+                next: (res: any) => {
+                    this.availableCategories = res?.data || [];
+                },
+                error: err => console.error('Failed to load categories', err)
+            });
+        }
     }
 
     deleteCategory(category: any) {
@@ -384,7 +396,73 @@ export class User implements OnInit {
         localStorage.removeItem('role');
         this.router.navigate(['/login']);
     }
-    // Add these new methods
+
+    // Category Modal Methods
+    closeCategoryModal() {
+        this.showCategoryModal = false;
+    }
+
+    onCategorySearch() {
+        const query = this.categorySearchQuery.toLowerCase().trim();
+        if (!query) {
+            this.filteredCategories = [];
+            return;
+        }
+        this.filteredCategories = this.availableCategories.filter(cat =>
+            cat.name.toLowerCase().includes(query)
+        );
+    }
+
+    selectCategory(cat: any) {
+        this.selectedCategory = cat;
+        this.selectedTasks = [];
+        this.categorySearchQuery = '';
+        this.filteredCategories = [];
+        // Load tasks for this category
+        this.api.getTasks().subscribe({
+            next: (res: any) => {
+                const allTasks = res?.data || [];
+                this.selectedTasks = allTasks.filter((task: any) => task.categoryId.includes(cat._id)).map((task: any) => ({
+                    taskId: task._id,
+                    taskName: task.name,
+                    checked: true,
+                    price: task.price || []
+                }));
+            },
+            error: err => console.error('Failed to load tasks', err)
+        });
+    }
+
+    clearSelectedCategory() {
+        this.selectedCategory = null;
+        this.selectedTasks = [];
+    }
+
+    toggleTask(task: any) {
+        task.checked = !task.checked;
+    }
+
+    saveCategory() {
+        this.categoryModalError = '';
+        if (!this.selectedCategory) {
+            this.categoryModalError = 'Please select a category.';
+            return;
+        }
+        const selectedTasks = this.selectedTasks.filter(t => t.checked);
+        if (!selectedTasks.length) {
+            this.categoryModalError = 'Please select at least one task.';
+            return;
+        }
+        const categoryData = {
+            categoryId: this.selectedCategory._id,
+            categoryName: this.selectedCategory.name,
+            tasks: selectedTasks
+        };
+        // Add to user categories
+        this.userData.categories = [...(this.userData.categories || []), categoryData];
+        this.saveUserFields({ categories: this.userData.categories });
+        this.closeCategoryModal();
+    }
 
     onLocationSearch() {
         const query = this.locationSearchQuery.trim().toLowerCase();
