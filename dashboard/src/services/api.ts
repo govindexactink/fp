@@ -148,4 +148,10 @@ export class Api {
          headers: this.getAuthHeaders()
       });
    }
+   getTaskEditData(userId: string, categoryId: string, taskId: string): Observable<any> {
+      return this.http.get(`${this.baseUrl}/user/${userId}/task-edit-data`, {
+         headers: this.getAuthHeaders(),
+         params: { categoryId, taskId }
+      });
+   }
 }

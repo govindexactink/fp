@@ -37,6 +37,14 @@ export class User implements OnInit {
         overrideId: ''
     };
     zipcodeOverrides: any[] = [];
+
+    // Task Edit Modal State
+    taskEditModalOpen = false;
+    editingTask: any = null;
+    editingCategory: any = null;
+    editingTaskDefaultPrice: any = { lead: 0, call: 0, appointment: 0 };
+    taskEditZipcodes: any[] = [];
+
     locationSearchQuery = '';
     locationSearchLoading = false;
     filteredLocations: any[] = [];
@@ -99,19 +107,17 @@ export class User implements OnInit {
         this.showLocationModal = true;
         this.locationModalError = '';
         this.selectedLocation = null;
-        this.locationSearchQuery = '';       // ← add
-        this.filteredLocations = [];         // ← add
-        // this.locationSearchLoading = false;
+        this.locationSearchQuery = '';
+        this.filteredLocations = [];
 
         if (!this.availableLocations.length) {
-            this.api.getLocations().subscribe({   // no param needed
+            this.api.getLocations().subscribe({
                 next: (res: any[]) => {
                     this.availableLocations = res || [];
                 },
                 error: err => console.error('Failed to load locations', err)
             });
         }
-
     }
 
     closeLocationModal() {
@@ -129,21 +135,19 @@ export class User implements OnInit {
         const userId = this.userData?._id;
         if (!userId) return;
 
-        // First, add the location
         const locationPayload = {
             description: this.selectedLocation.location,
             city: this.selectedLocation.city,
             state: this.selectedLocation.state,
             country: this.selectedLocation.country || '',
-            zipcode: null, // No zipcode in location
+            zipcode: null,
             type: this.selectedLocation.type || 'city',
             stateShort: this.selectedLocation.stateShort || '',
-            zipcodes: [] // Empty zipcodes in location
+            zipcodes: []
         };
 
         this.api.addUserLocation(userId, locationPayload).subscribe({
             next: () => {
-                // Now, fetch zipcodes and add to service areas
                 this.addZipcodesToServiceArea(this.selectedLocation);
                 this.closeLocationModal();
                 this.loadUserData();
@@ -173,7 +177,6 @@ export class User implements OnInit {
                 const first = Array.isArray(res?.data) ? res.data[0] : null;
                 const zipcodes: string[] = Array.isArray(first?.zipcodes) ? first.zipcodes : [];
                 if (zipcodes.length) {
-                    // Add to service areas
                     const userId = this.userData?._id;
                     const currentZipcodes = this.userData.service_areas_zipcodes || [];
                     const newZipcodes = [...new Set([...currentZipcodes, ...zipcodes])];
@@ -262,7 +265,6 @@ export class User implements OnInit {
     }
 
     onTaskCheckedChange(category: any, task: any) {
-        // Persist the checkbox state immediately
         this.saveUserFields({ categories: this.userData.categories });
     }
 
@@ -391,6 +393,244 @@ export class User implements OnInit {
         });
     }
 
+    // ─── Task Edit Modal Methods ──────────────────────────────────
+
+    openTaskEditModal(category: any, task: any) {
+        this.editingCategory = category;
+        this.editingTask = task;
+        this.taskEditModalOpen = true;
+
+        const userId = this.userData?._id;
+        if (!userId) return;
+
+        // Set default price from task.price (enriched from Task model)
+        this.editingTaskDefaultPrice = {
+            lead: task.price?.lead ?? 0,
+            call: task.price?.call ?? 0,
+            appointment: task.price?.appointment ?? 0
+        };
+
+        // Fetch enriched task edit data from backend
+        this.api.getTaskEditData(userId, category.categoryId, task.taskId).subscribe({
+            next: (res: any) => {
+                const data = res?.data;
+                const defaultPrice = data?.defaultPrice || this.editingTaskDefaultPrice;
+                const locationServiceAreas: any[] = data?.locationServiceAreas || [];
+                const userLocations: any[] = data?.userLocations || [];
+                const overrides: any[] = data?.overrides || [];
+                const userServiceAreas: string[] = data?.userServiceAreas || [];
+
+                this.editingTaskDefaultPrice = defaultPrice;
+
+                // Build zipcode entries from location service areas
+                this.taskEditZipcodes = [];
+
+                locationServiceAreas.forEach((loc: any) => {
+                    const locZipcodes: string[] = loc.zipcodes || [];
+                    const serviceAreaPrices: Record<string, any> = loc.serviceAreaPrices || {};
+
+                    locZipcodes.forEach((zip: string) => {
+                        // Check if user has excluded this zipcode
+                        const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
+                        if (isExcluded) return; // Skip excluded zipcodes
+
+                        // Check for override first, then location serviceArea price, then default task price
+                        const override = overrides.find(
+                            (o: any) => o.zipcode === zip && o.taskId === task.taskId
+                        );
+
+                        const serviceAreaPrice = serviceAreaPrices[zip];
+
+                        this.taskEditZipcodes.push({
+                            locationId: loc.locationId,
+                            location: loc.location || loc.city || zip,
+                            city: loc.city || '',
+                            state: loc.state || '',
+                            type: loc.type || 'city',
+                            stateShort: loc.stateShort || '',
+                            zipcode: zip,
+                            price: override?.price
+                                || serviceAreaPrice
+                                || defaultPrice,
+                            editLead: override?.price?.lead ?? serviceAreaPrice?.lead ?? defaultPrice?.lead ?? 0,
+                            editCall: override?.price?.call ?? serviceAreaPrice?.call ?? defaultPrice?.call ?? 0,
+                            editAppointment: override?.price?.appointment ?? serviceAreaPrice?.appointment ?? defaultPrice?.appointment ?? 0,
+                            hasOverride: !!override
+                        });
+                    });
+                });
+
+                // Add user locations that are NOT already in locationServiceAreas
+                userLocations.forEach((loc: any) => {
+                    const locZipcodes: string[] = loc.zipcodes || [];
+                    // Only show zipcodes that match user's service areas
+                    const matchingZips = locZipcodes.filter((z: string) => userServiceAreas.includes(z));
+
+                    matchingZips.forEach((zip: string) => {
+                        // Check if user has excluded this zipcode
+                        const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
+                        if (isExcluded) return; // Skip excluded zipcodes
+
+                        // Skip if already added from task-specific locations
+                        const alreadyAdded = this.taskEditZipcodes.some((e: any) => e.zipcode === zip);
+                        if (alreadyAdded) return;
+
+                        const override = overrides.find(
+                            (o: any) => o.zipcode === zip && o.taskId === task.taskId
+                        );
+
+                        this.taskEditZipcodes.push({
+                            locationId: loc.locationId,
+                            location: loc.location || loc.city || zip,
+                            city: loc.city || '',
+                            state: loc.state || '',
+                            type: loc.type || 'city',
+                            stateShort: loc.stateShort || '',
+                            zipcode: zip,
+                            price: override?.price || defaultPrice,
+                            editLead: override?.price?.lead ?? defaultPrice?.lead ?? 0,
+                            editCall: override?.price?.call ?? defaultPrice?.call ?? 0,
+                            editAppointment: override?.price?.appointment ?? defaultPrice?.appointment ?? 0,
+                            hasOverride: !!override
+                        });
+                    });
+                });
+
+                // Also include zipcodes from the task itself that may not have locations
+                const taskZipcodes: string[] = task.zipcodes || [];
+                taskZipcodes.forEach((zip: string) => {
+                    // Skip if already added from locations
+                    const alreadyAdded = this.taskEditZipcodes.some((e: any) => e.zipcode === zip);
+                    if (alreadyAdded) return;
+
+                    // Skip if excluded
+                    const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
+                    if (isExcluded) return;
+
+                    const override = overrides.find(
+                        (o: any) => o.zipcode === zip && o.taskId === task.taskId
+                    );
+
+                    const loc = this.findLocationByZipcode(zip);
+
+                    this.taskEditZipcodes.push({
+                        locationId: loc?._id || '',
+                        location: loc ? loc.description : zip,
+                        city: loc?.city || '',
+                        state: loc?.state || '',
+                        type: loc?.type || 'zipcode',
+                        stateShort: loc?.stateShort || '',
+                        zipcode: zip,
+                        price: override?.price || defaultPrice,
+                        editLead: override?.price?.lead ?? defaultPrice?.lead ?? 0,
+                        editCall: override?.price?.call ?? defaultPrice?.call ?? 0,
+                        editAppointment: override?.price?.appointment ?? defaultPrice?.appointment ?? 0,
+                        hasOverride: !!override
+                    });
+                });
+                this.cdr.markForCheck();
+            },
+            error: err => {
+                console.error('Failed to load task edit data', err);
+                // Fallback: build from local data
+                this.buildTaskEditZipcodesFallback(task, category);
+            }
+        });
+    }
+
+    buildTaskEditZipcodesFallback(task: any, category: any) {
+        const defaultPrice = task.price || { lead: 0, call: 0, appointment: 0 };
+        this.editingTaskDefaultPrice = defaultPrice;
+        this.taskEditZipcodes = [];
+
+        const taskZipcodes: string[] = task.zipcodes || [];
+        taskZipcodes.forEach((zip: string) => {
+            const isExcluded = (this.userData?.unselected_zipcodes || []).includes(zip);
+            if (isExcluded) return;
+
+            const override = this.zipcodeOverrides.find(
+                (o: any) => o.taskId === task.taskId && o.zipcode === zip
+            );
+            const loc = this.findLocationByZipcode(zip);
+
+            this.taskEditZipcodes.push({
+                locationId: '',
+                location: loc ? loc.description : zip,
+                city: loc?.city || '',
+                state: loc?.state || '',
+                type: loc?.type || 'zipcode',
+                stateShort: loc?.stateShort || '',
+                zipcode: zip,
+                price: override?.price || defaultPrice,
+                editLead: override?.price?.lead ?? defaultPrice?.lead ?? 0,
+                editCall: override?.price?.call ?? defaultPrice?.call ?? 0,
+                editAppointment: override?.price?.appointment ?? defaultPrice?.appointment ?? 0,
+                hasOverride: !!override
+            });
+        });
+    }
+
+    findLocationByZipcode(zipcode: string): any {
+        const locations = this.userData?.locations || [];
+        for (const loc of locations) {
+            if (loc.zipcodes && Array.isArray(loc.zipcodes) && loc.zipcodes.includes(zipcode)) {
+                return loc;
+            }
+        }
+        return null;
+    }
+
+    closeTaskEditModal() {
+        this.taskEditModalOpen = false;
+        this.editingTask = null;
+        this.editingCategory = null;
+        this.editingTaskDefaultPrice = { lead: 0, call: 0, appointment: 0 };
+        this.taskEditZipcodes = [];
+    }
+
+    saveLocationPriceOverride(zipEntry: any) {
+        const userId = this.userData?._id;
+        if (!userId || !this.editingTask || !this.editingCategory) return;
+
+        const payload = {
+            categoryId: this.editingCategory.categoryId,
+            taskId: this.editingTask.taskId,
+            zipcode: zipEntry.zipcode,
+            price: {
+                lead: Number(zipEntry.editLead) || 0,
+                call: Number(zipEntry.editCall) || 0,
+                appointment: Number(zipEntry.editAppointment) || 0
+            }
+        };
+
+        this.api.saveZipcodePriceOverride(userId, payload).subscribe({
+            next: () => {
+                zipEntry.hasOverride = true;
+                zipEntry.price = payload.price;
+                // Update local zipcodeOverrides cache
+                const existing = this.zipcodeOverrides.find(
+                    (o: any) => o.taskId === payload.taskId && o.zipcode === payload.zipcode
+                );
+                if (existing) {
+                    existing.price = payload.price;
+                } else {
+                    this.zipcodeOverrides.push({
+                        _id: Date.now().toString(),
+                        userId,
+                        categoryId: payload.categoryId,
+                        taskId: payload.taskId,
+                        zipcode: payload.zipcode,
+                        price: payload.price
+                    });
+                }
+            },
+            error: err => {
+                console.error('Failed to save location price override', err);
+                alert('Unable to save price override');
+            }
+        });
+    }
+
     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
@@ -443,6 +683,7 @@ export class User implements OnInit {
     }
 
     saveCategory() {
+        this.cdr.markForCheck();
         this.categoryModalError = '';
         if (!this.selectedCategory) {
             this.categoryModalError = 'Please select a category.';

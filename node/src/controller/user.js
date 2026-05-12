@@ -210,6 +210,14 @@ exports.deleteZipcodePriceOverride = globle.asyncHandler(async (req, res) => {
   const result = await userService.deleteZipcodePriceOverride(req.params.userId, req.params.overrideId);
   globle.sendResponse(res, 200, result.message);
 });
+
+exports.getTaskEditData = globle.asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const { categoryId, taskId } = req.query;
+  const data = await userService.getTaskEditData(userId, categoryId, taskId);
+  globle.sendResponse(res, 200, "Task edit data fetched", data);
+});
+
 // ─── QUERY ───────────────────────────────────────────────────────
 
 exports.getCheckedTasksWithFilters = globle.asyncHandler(async (req, res) => {

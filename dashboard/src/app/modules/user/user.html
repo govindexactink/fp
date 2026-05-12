@@ -58,22 +58,6 @@
                     </div>
                 </ng-template>
                 <hr>
-                <!-- <h5>Service Areas (Zipcodes)</h5>
-                <div *ngIf="userData?.service_areas_zipcodes?.length; else noServiceAreas" class="border rounded p-2"
-                    style="max-height: 200px; overflow-y: auto;">
-                    <div class="row g-2">
-                        <div *ngFor="let zip of userData.service_areas_zipcodes" class="col-auto">
-                            <span class="badge bg-secondary d-flex align-items-center">
-                                {{ zip }}
-                                <button type="button" class="btn btn-sm btn-close btn-close-white ms-2"
-                                    aria-label="Remove" (click)="removeServiceZipcode(zip)"></button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <ng-template #noServiceAreas>
-                    <p class="text-muted">No service areas defined.</p>
-                </ng-template> -->
                 <h5>Service Areas (Zipcodes)</h5>
                 <div *ngIf="userData?.service_areas_zipcodes?.length; else noServiceAreas" class="border rounded p-2"
                     style="max-height: 200px; overflow-y: auto;">
@@ -91,18 +75,6 @@
                     <p class="text-muted">No service areas defined.</p>
                 </ng-template>
 
-                <!-- <h6 class="mt-4">Unselected Zipcodes</h6>
-                <div *ngIf="unselectedZipcodes?.length; else noUnselected">
-                    <div class="row g-2">
-                        <div *ngFor="let zip of unselectedZipcodes" class="col-auto">
-                            <span class="badge bg-warning d-flex align-items-center">
-                                {{ zip }}
-                                <button type="button" class="btn btn-sm btn-close ms-2" aria-label="Add back"
-                                    (click)="addBackZipcode(zip)"></button>
-                            </span>
-                        </div>
-                    </div>
-                </div> -->
                 <h6 class="mt-4">Unselected Zipcodes</h6>
                 <div *ngIf="unselectedZipcodes?.length; else noUnselected" class="border rounded p-2"
                     style="max-height: 200px; overflow-y: auto;">
@@ -118,14 +90,8 @@
                 <ng-template #noUnselected>
                     <p class="text-muted">No unselected zipcodes.</p>
                 </ng-template>
-                <ng-template #noUnselected>
-                    <p class="text-muted">No unselected zipcodes.</p>
-                </ng-template>
 
                 <hr>
-
-
-
 
                 <h5>Categories & Tasks</h5>
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -138,7 +104,6 @@
                             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                 <strong>{{ cat.categoryName }}</strong>
                                 <div>
-                                    <!-- <button class="btn btn-sm btn-primary me-1" (click)="addTask(cat)">Add Task</button> -->
                                     <button class="btn btn-sm btn-danger" (click)="deleteCategory(cat)">Delete
                                         Category</button>
                                 </div>
@@ -154,18 +119,15 @@
                                                             (ngModelChange)="onTaskCheckedChange(cat, task)"> {{
                                                         task.taskName }}
                                                     </h6>
-                                                    <p class="mb-1">Price: Lead {{ task.price?.lead ?? 0 }}, Call {{
+                                                    <p class="mb-1">Default Price: Lead {{ task.price?.lead ?? 0 }},
+                                                        Call {{
                                                         task.price?.call ?? 0 }}, Appointment {{ task.price?.appointment
                                                         ?? 0 }}</p>
                                                     <p class="mb-1" *ngIf="task.zipcodes?.length">
-                                                        <strong>Zipcodes:</strong>
+                                                        <strong>Task Zipcodes:</strong>
                                                         <span *ngFor="let zip of task.zipcodes"
                                                             class="badge bg-info text-dark me-1">
                                                             {{ zip }}
-                                                            <button type="button"
-                                                                class="btn btn-close btn-close-white btn-sm ms-1"
-                                                                aria-label="Override"
-                                                                (click)="openOverrideModal(cat, task, zip)"></button>
                                                         </span>
                                                     </p>
                                                     <p class="mb-0" *ngIf="getMatchingZipcodes(task)?.length">
@@ -180,10 +142,12 @@
                                                             getPriceForZipcode(task, zip)?.appointment }}</small>
                                                     </div>
                                                 </div>
-                                                <!-- <div class="text-end">
-                                                    <button class="btn btn-sm btn-danger"
-                                                        (click)="deleteTask(cat, task)">Delete</button>
-                                                </div> -->
+                                                <div class="text-end d-flex align-items-start">
+                                                    <button class="btn btn-sm btn-outline-primary me-1"
+                                                        (click)="openTaskEditModal(cat, task)" title="Edit Task Prices">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -210,16 +174,6 @@
                                     (click)="closeLocationModal()"></button>
                             </div>
                             <div class="modal-body">
-                                <!-- <div class="mb-3">
-                                    <label class="form-label">Choose Location</label>
-                                    <select class="form-select" [(ngModel)]="selectedLocation">
-                                        <option [ngValue]="null">Select a location</option>
-                                        <option *ngFor="let loc of availableLocations" [ngValue]="loc">
-                                            {{ loc.location }} - {{ loc.city }}, {{ loc.state }}
-                                        </option>
-                                    </select>
-                                </div> -->
-                                <!-- REPLACE WITH THIS -->
                                 <div class="mb-3">
                                     <label class="form-label">Search Location</label>
                                     <input type="text" class="form-control" placeholder="Type city or location name..."
@@ -240,8 +194,8 @@
                                     <div>
                                         <strong>{{ selectedLocation.location }}</strong><br />
                                         <small>{{ selectedLocation.city }}, {{ selectedLocation.state }}
-                                            {{ selectedLocation.country ? '(' + selectedLocation.country + ')' : '' }}
-                                        </small>
+                                            {{ selectedLocation.country ? '(' + selectedLocation.country + ')' : ''
+                                            }}</small>
                                     </div>
                                     <button class="btn btn-sm btn-outline-danger" (click)="clearSelectedLocation()">✕
                                         Change</button>
@@ -269,7 +223,7 @@
                     </div>
                 </div>
 
-                <!-- Override Modal -->
+                <!-- Override Modal (original) -->
                 <div class="modal fade" [class.show]="overrideModalOpen"
                     [style.display]="overrideModalOpen ? 'block' : 'none'" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -355,9 +309,109 @@
                                 <button type="button" class="btn btn-secondary"
                                     (click)="closeCategoryModal()">Cancel</button>
                                 <button type="button" class="btn btn-primary" (click)="saveCategory()"
-                                    [disabled]="!selectedCategory || !selectedTasks.some(t => t.checked)">
-                                    Add Category
+                                    [disabled]="!selectedCategory">
+                                    Add Category12
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Edit Modal -->
+                <div class="modal fade" [class.show]="taskEditModalOpen"
+                    [style.display]="taskEditModalOpen ? 'block' : 'none'" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Task Prices - {{ editingTask?.taskName }}</h5>
+                                <button type="button" class="btn-close" aria-label="Close"
+                                    (click)="closeTaskEditModal()"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-muted">Task: <strong>{{ editingTask?.taskName }}</strong> | Category:
+                                    <strong>{{ editingCategory?.categoryName }}</strong>
+                                </p>
+
+                                <!-- Default Task Price (from Task model) -->
+                                <h6>Default Task Price (from Task table):</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Lead Price</label>
+                                        <input type="number" class="form-control"
+                                            [ngModel]="editingTaskDefaultPrice?.lead ?? 0" disabled />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Call Price</label>
+                                        <input type="number" class="form-control"
+                                            [ngModel]="editingTaskDefaultPrice?.call ?? 0" disabled />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Appointment Price</label>
+                                        <input type="number" class="form-control"
+                                            [ngModel]="editingTaskDefaultPrice?.appointment ?? 0" disabled />
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <!-- Location-wise Zipcode Price Overrides -->
+                                <h6>Location-wise Zipcode Price Overrides:</h6>
+                                <div *ngIf="taskEditZipcodes.length; else noEditZipcodes">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Location</th>
+                                                    <th>City</th>
+                                                    <th>State</th>
+                                                    <th>Type</th>
+                                                    <th>Zipcode</th>
+                                                    <th>Lead Price</th>
+                                                    <th>Call Price</th>
+                                                    <th>Appointment Price</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let loc of taskEditZipcodes">
+                                                    <td>{{ loc.location }}</td>
+                                                    <td>{{ loc.city }}</td>
+                                                    <td>{{ loc.state }}</td>
+                                                    <td>{{ loc.type }}</td>
+                                                    <td>{{ loc.zipcode }}</td>
+                                                    <td>
+                                                        <input type="number" class="form-control form-control-sm"
+                                                            [(ngModel)]="loc.editLead" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control form-control-sm"
+                                                            [(ngModel)]="loc.editCall" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control form-control-sm"
+                                                            [(ngModel)]="loc.editAppointment" />
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success"
+                                                            (click)="saveLocationPriceOverride(loc)">
+                                                            Save
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <ng-template #noEditZipcodes>
+                                    <div class="alert alert-info">
+                                        No locations/zipcodes associated with this task. Add locations to the task
+                                        first.
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    (click)="closeTaskEditModal()">Close</button>
                             </div>
                         </div>
                     </div>

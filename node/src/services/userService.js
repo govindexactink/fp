@@ -1,6 +1,8 @@
 const User = require("../model/userModel");
 const ZipcodeOverride = require("../model/zipcodePriceOverrideModel");
+const Task = require("../model/taskModel");
 const jwt = require("jsonwebtoken");
+const { resolveLocationZipcodes } = require("./locationService");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
@@ -51,7 +53,23 @@ const getAllUsers = async () => {
 const getUserById = async (userId) => {
   const user = await User.findById(userId).select("-__v");
   if (!user) throw { status: 404, message: "User not found" };
-  return user;
+  const userObj = user.toObject();
+
+  // Enrich categories with task prices from the Task model
+  if (userObj.categories && Array.isArray(userObj.categories)) {
+    for (const cat of userObj.categories) {
+      if (cat.tasks && Array.isArray(cat.tasks)) {
+        for (const task of cat.tasks) {
+          const taskDoc = await Task.findOne({ _id: task.taskId }).lean();
+          if (taskDoc && taskDoc.price && taskDoc.price.length > 0) {
+            task.price = taskDoc.price[0];
+          }
+        }
+      }
+    }
+  }
+
+  return userObj;
 };
 
 const updateUser = async (userId, updateData) => {
@@ -339,6 +357,91 @@ const getTotalPrice = async (userId) => {
   return { total, breakdown: checkedItems };
 };
 
+// ─── TASK EDIT DATA SERVICE ─────────────────────────────────────
+
+const getTaskEditData = async (userId, categoryId, taskId) => {
+  if (!userId) throw { status: 400, message: "userId is required" };
+  if (!categoryId) throw { status: 400, message: "categoryId is required" };
+  if (!taskId) throw { status: 400, message: "taskId is required" };
+
+  // 1. User fetch karo
+  const user = await User.findById(userId).select("-__v -password").lean();
+  if (!user) throw { status: 404, message: "User not found" };
+
+  // Excluded aur service area zipcodes ke fast-lookup Sets
+  const excludedSet = new Set(user.unselected_zipcodes || []);
+  const serviceAreaSet = new Set(user.service_areas_zipcodes || []);
+
+  // 2. Task ka default price Task model se fetch karo
+  const taskDoc = await Task.findById(taskId).lean();
+  const defaultPrice =
+    taskDoc && taskDoc.price && taskDoc.price.length > 0
+      ? taskDoc.price[0]
+      : { lead: 0, call: 0, appointment: 0 };
+
+  // 3. Is task ke liye zipcode overrides fetch karo aur ek map banao
+  const overridesDocs = await ZipcodeOverride.find({ userId, categoryId, taskId }).lean();
+  const overridesMap = {};
+  overridesDocs.forEach((o) => {
+    overridesMap[o.zipcode] = o.price;
+  });
+
+  // 4. Har user location ke liye:
+  //    a) Zipcode DB se resolve karo (city/state query)
+  //    b) Sirf wahi rakho jo service area mein hain aur excluded nahi hain
+  //    c) Har zipcode ke liye price lagao: override > defaultPrice
+  const enrichedLocations = await Promise.all(
+    (user.locations || []).map(async (loc) => {
+      // DB se zipcodes fetch karo for this city/state
+      const allZipcodes = await resolveLocationZipcodes(loc);
+
+      // Filter: service area mein ho + excluded na ho
+      const filteredZipcodes = allZipcodes.filter(
+        (z) => serviceAreaSet.has(z) && !excludedSet.has(z)
+      );
+
+      // Har zipcode ke liye price map
+      const serviceAreaPrices = {};
+      filteredZipcodes.forEach((zip) => {
+        serviceAreaPrices[zip] = overridesMap[zip] || defaultPrice;
+      });
+
+      return {
+        locationId: String(loc._id),
+        location: loc.description || loc.city || "",
+        city: loc.city || "",
+        state: loc.state || "",
+        stateShort: loc.stateShort || "",
+        type: loc.type || "city",
+        zipcodes: filteredZipcodes,
+        serviceAreaPrices,
+      };
+    })
+  );
+
+  // 5. locationServiceAreas = wahi locations jinka koi bhi zipcode
+  //    task ke zipcodes se match karta ho
+  //    Agar task model mein zipcodes nahi hain → sari locations dikhao
+  const taskZipcodes = taskDoc ? (taskDoc.zipcodes || []) : [];
+  const locationServiceAreas =
+    taskZipcodes.length > 0
+      ? enrichedLocations.filter((loc) =>
+          loc.zipcodes.some((z) => taskZipcodes.includes(z))
+        )
+      : enrichedLocations;
+
+  return {
+    userId,
+    categoryId,
+    taskId,
+    defaultPrice,
+    locationServiceAreas,
+    userLocations: enrichedLocations,
+    overrides: overridesDocs,
+    userServiceAreas: user.service_areas_zipcodes || [],
+  };
+};
+
 // ─── HELPERS ────────────────────────────────────────────────────
 
 const sanitizeUser = (user) => {
@@ -355,5 +458,6 @@ module.exports = {
   addFilter, updateFilter, toggleFilterChecked, deleteFilter,
   addLocation, updateLocation, deleteLocation,
   addOrUpdateZipcodePriceOverride, getZipcodePriceOverrides, deleteZipcodePriceOverride,
-  getCheckedTasksWithFilters, getTotalPrice, updateUnselectedZipcodes
+  getCheckedTasksWithFilters, getTotalPrice, updateUnselectedZipcodes,
+  getTaskEditData,
 };

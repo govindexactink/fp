@@ -19,6 +19,7 @@ userRouter.get("/profile", protect, ctrl.getProfile);
 // PUT /api/users/:userId/status
 // DELETE /api/users/:userId
 userRouter.get("/", protect, ctrl.getAllUsers);
+userRouter.get("/:userId/task-edit-data", protect, ctrl.getTaskEditData);
 userRouter.get("/:userId", protect, ctrl.getUserById);
 userRouter.put("/:userId", protect, ctrl.updateUser);
 userRouter.put("/:userId/unselected-zipcodes", protect, ctrl.updateUnselectedZipcodes);

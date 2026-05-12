@@ -9,7 +9,7 @@ exports.protect = async (req, res, next) => {
     if (req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
     }
-    console.log("token", token)
+
     if (!token) {
       return res.status(401).json({ success: false, message: "No token provided" });
     }
@@ -18,7 +18,7 @@ exports.protect = async (req, res, next) => {
     const user = await User.findById({ _id: decoded?.id });
     // console.log("user", user);
     if (!user) return res.status(401).json({ success: false, message: "User not found" });
-    console.log("Decoded token2:", decoded.id);
+
     req.user = decoded.id;
     // console.log("Decoded token3:", decoded.id);
     next();
