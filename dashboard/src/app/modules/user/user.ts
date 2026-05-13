@@ -787,6 +787,22 @@ export class User implements OnInit {
             this.editingLocationPrice.state = location.state;
             this.editingLocationPrice.stateShort = location.stateShort || '';
             this.editingLocationPrice.type = location.type || 'city';
+            
+            // Check for existing location price and populate price fields
+            const existingPrice = this.locationPrices.find((lp: any) =>
+                lp.city === location.city &&
+                lp.state === location.state &&
+                lp.type === location.type
+            );
+            if (existingPrice && existingPrice.price) {
+                this.editingLocationPrice.price = {
+                    lead: existingPrice.price.lead ?? 0,
+                    call: existingPrice.price.call ?? 0,
+                    appointment: existingPrice.price.appointment ?? 0
+                };
+            } else {
+                this.editingLocationPrice.price = { lead: 0, call: 0, appointment: 0 };
+            }
         }
     }
 
