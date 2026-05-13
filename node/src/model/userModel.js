@@ -31,76 +31,76 @@ const categorySchema = new mongoose.Schema({
   tasks: [taskSchema],
 });
 
- const LocationSchema = new mongoose.Schema({
-   description: { type: String, required: true, trim: true },
-   city: { type: String, default: '', trim: true },
-   state: { type: String, default: '', trim: true },
-   stateShort: { type: String, default: '', trim: true },
-   country: { type: String, default: '', trim: true },
-   zipcode: { type: String, default: null, trim: true },
-   zipcodes: {
-     type: [String],
-     default: []
-   },
-   type: {
-     type: String,
-     enum: ['city', 'state', 'zipcode', 'country', 'radius'],
-     required: true
-   },
-   radius: { type: Number, default: null },   // numeric radius, e.g. 20
-   unit: { type: String, default: null },     // e.g. "Miles"
- });
+const LocationSchema = new mongoose.Schema({
+  description: { type: String, required: true, trim: true },
+  city: { type: String, default: '', trim: true },
+  state: { type: String, default: '', trim: true },
+  stateShort: { type: String, default: '', trim: true },
+  country: { type: String, default: '', trim: true },
+  //  zipcode: { type: String, default: null, trim: true },
+  // zipcodes: {
+  //   type: [String],
+  //   default: []
+  // },
+  type: {
+    type: String,
+    enum: ['city', 'state', 'zipcode', 'country', 'radius'],
+    required: true
+  },
+  radius: { type: Number, default: null },   // numeric radius, e.g. 20
+  unit: { type: String, default: null },     // e.g. "Miles"
+});
 
 
 
- const userSchema = new mongoose.Schema(
-   {
-     username: {
-       type: String,
-       required: [true, "Username is required"],
-       unique: true,
-       trim: true,
-       minlength: [3, "Username must be at least 3 characters"],
-     },
-     email: {
-       type: String,
-       required: [true, "Email is required"],
-       unique: true,
-       lowercase: true,
-       trim: true,
-       match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
-     },
-     password: {
-       type: String,
-       required: [true, "Password is required"],
-       minlength: [6, "Password must be at least 6 characters"],
-       // select: false,
-     },
-     service_areas_zipcodes: {
-       type: [String],
-       required: false,
-       default: [],
-     },
-     unselected_zipcodes: {
-       type: [String],
-       required: false,
-       default: [],
-     },
-     locations: [LocationSchema],
-     categories: [categorySchema],
-      isActive: { type: Boolean, default: true },
-      isAdminLogin: { type: Boolean, default: false },  // true if an admin is currently logged into this user account
-      lockedByAdmin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },  // admin userId who locked the account
-      lockedAt: { type: Date, default: null },         // when the account was locked
-      status: {
-       type: String,
-       enum: ["active", "pending"],
-       default: "pending"
-     },
-     role: { type: String, enum: ["user", "admin"], default: "user" },
-   },
-   { timestamps: true }
- );
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+      unique: true,
+      trim: true,
+      minlength: [3, "Username must be at least 3 characters"],
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters"],
+      // select: false,
+    },
+    service_areas_zipcodes: {
+      type: [String],
+      required: false,
+      default: [],
+    },
+    unselected_zipcodes: {
+      type: [String],
+      required: false,
+      default: [],
+    },
+    locations: [LocationSchema],
+    categories: [categorySchema],
+    isActive: { type: Boolean, default: true },
+    isAdminLogin: { type: Boolean, default: false },  // true if an admin is currently logged into this user account
+    lockedByAdmin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },  // admin userId who locked the account
+    lockedAt: { type: Date, default: null },         // when the account was locked
+    status: {
+      type: String,
+      enum: ["active", "pending"],
+      default: "pending"
+    },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
+  },
+  { timestamps: true }
+);
 
 // Hash password before save
 // userSchema.pre("save", async function (next) {

@@ -60,8 +60,14 @@ export class Api {
       return this.http.delete(`${this.baseUrl}/task/delete-location/${id}`, { body: data });
    }
 
-   getLocations() {
-      return this.http.get<any[]>('assets/locations.json');
+   // getLocations() {
+   //    return this.http.get<any[]>('assets/locations.json');
+   // }
+   getLocations(name: string): Observable<any> {
+      return this.http.get(
+         `https://api.api-ninjas.com/v1/city?name=${name}`,
+         { headers: { 'X-Api-Key': '8s8SCTGxrk05F1vkL4Bb1ZF9ie2o7eByAM55Lhsa' } }
+      )
    }
 
    addUserLocation(userId: string, data: any): Observable<any> {
@@ -95,36 +101,36 @@ export class Api {
       });
    }
 
-    saveZipcodePriceOverride(userId: string, data: any): Observable<any> {
-       return this.http.post(`${this.baseUrl}/user/${userId}/zipcode-prices`, data, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   saveZipcodePriceOverride(userId: string, data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/user/${userId}/zipcode-prices`, data, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
-    deleteZipcodePriceOverride(userId: string, overrideId: string): Observable<any> {
-       return this.http.delete(`${this.baseUrl}/user/${userId}/zipcode-prices/${overrideId}`, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   deleteZipcodePriceOverride(userId: string, overrideId: string): Observable<any> {
+      return this.http.delete(`${this.baseUrl}/user/${userId}/zipcode-prices/${overrideId}`, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
-    addOrUpdateLocationPrice(userId: string, data: any): Observable<any> {
-       return this.http.post(`${this.baseUrl}/user/${userId}/location-prices`, data, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   addOrUpdateLocationPrice(userId: string, data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/user/${userId}/location-prices`, data, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
-    getLocationPrices(userId: string, params: any = {}): Observable<any> {
-       return this.http.get(`${this.baseUrl}/user/${userId}/location-prices`, {
-          headers: this.getAuthHeaders(),
-          params
-       });
-    }
+   getLocationPrices(userId: string, params: any = {}): Observable<any> {
+      return this.http.get(`${this.baseUrl}/user/${userId}/location-prices`, {
+         headers: this.getAuthHeaders(),
+         params
+      });
+   }
 
-    deleteLocationPrice(userId: string, locationPriceId: string): Observable<any> {
-       return this.http.delete(`${this.baseUrl}/user/${userId}/location-prices/${locationPriceId}`, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   deleteLocationPrice(userId: string, locationPriceId: string): Observable<any> {
+      return this.http.delete(`${this.baseUrl}/user/${userId}/location-prices/${locationPriceId}`, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
    sendLocation(data: any) {
       return this.http.post(`${this.baseUrl}/task/location`, data);
@@ -142,23 +148,23 @@ export class Api {
       return this.http.post(`${this.baseUrl}/user/admin/login`, data);
    }
 
-    impersonateUser(adminId: string, userId: string): Observable<any> {
-       return this.http.post(`${this.baseUrl}/user/${adminId}/impersonate/${userId}`, {}, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   impersonateUser(adminId: string, userId: string): Observable<any> {
+      return this.http.post(`${this.baseUrl}/user/${adminId}/impersonate/${userId}`, {}, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
-    exitImpersonation(adminId: string, userId: string): Observable<any> {
-       return this.http.delete(`${this.baseUrl}/user/${adminId}/exit-impersonation/${userId}`, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   exitImpersonation(adminId: string, userId: string): Observable<any> {
+      return this.http.delete(`${this.baseUrl}/user/${adminId}/exit-impersonation/${userId}`, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
-    getLockedUsers(): Observable<any> {
-       return this.http.get(`${this.baseUrl}/user/locked-users`, {
-          headers: this.getAuthHeaders()
-       });
-    }
+   getLockedUsers(): Observable<any> {
+      return this.http.get(`${this.baseUrl}/user/locked-users`, {
+         headers: this.getAuthHeaders()
+      });
+   }
 
    getUserProfile(): Observable<any> {
       return this.http.get(`${this.baseUrl}/user/profile`, {

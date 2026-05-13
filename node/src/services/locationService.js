@@ -7,11 +7,12 @@ const getLocations = async (values) => {
     if (!Array.isArray(values)) {
         throw new AppError("Invalid input format", 400);
     }
-
+    console.log("values", values)
     const results = [];
 
     for (const item of values) {
         const { type, city, state, stateShort } = item;
+        console.log("item", item)
         let query = {};
 
         if (type === "state") {

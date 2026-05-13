@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Api } from '../../../services/api';
 import { PendingModal } from '../pending-modal/pending-modal';
+import { BulkLocationUploadComponent } from '../bulk-location-upload/bulk-location-upload.component';
 
 @Component({
     selector: 'app-user',
     standalone: true,
-    imports: [CommonModule, FormsModule, PendingModal],
+    imports: [CommonModule, FormsModule, PendingModal, BulkLocationUploadComponent],
     templateUrl: './user.html',
     styleUrls: ['./user.css']
 })
@@ -16,6 +17,7 @@ export class User implements OnInit {
     userData: any = null;
     loading = true;
     showPendingModal = false;
+    showBulkLocationModal = false;
 
     showLocationModal = false;
     availableLocations: any[] = [];
@@ -73,6 +75,22 @@ export class User implements OnInit {
 
     ngOnInit() {
         this.detectImpersonation();
+        this.loadUserData();
+    }
+
+    // ... rest of existing methods ...
+
+    openBulkLocationModal() {
+        this.showBulkLocationModal = true;
+    }
+
+    closeBulkLocationModal() {
+        this.showBulkLocationModal = false;
+    }
+
+    onBulkUploadClose() {
+        this.showBulkLocationModal = false;
+        // Reload user data to reflect any changes
         this.loadUserData();
     }
 
