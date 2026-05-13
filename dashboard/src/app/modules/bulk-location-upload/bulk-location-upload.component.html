@@ -3,21 +3,13 @@
 
 <!-- Main Modal Wrapper -->
 <div class="modal fade show" style="display: block;" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-xl">
+    <div class="modal-dialog modal-dialog-xl" style="width: 1000px; margin-right: auto; margin-left: auto;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Bulk Location Upload</h5>
                 <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
             </div>
             <div class="modal-body">
-                <!-- Header with Help button -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="mb-0">Bulk Location Upload</h4>
-                    <button class="btn btn-outline-secondary" (click)="locationModal = !locationModal">
-                        <i class="bi bi-info-circle"></i> Help
-                    </button>
-                </div>
-
                 <!-- Help Modal (nested) -->
                 <div class="modal fade" [class.show]="locationModal" [style.display]="locationModal ? 'block' : 'none'"
                     tabindex="-1" aria-hidden="true" style="z-index: 1060;">
@@ -30,19 +22,10 @@
                             </div>
                             <div class="modal-body">
                                 <p>Enter a list of locations (one per line) to add them to your profile.</p>
-                                <ul>
-                                    <li>Enter <strong>specific area/neighborhood names</strong> (e.g., "Downtown", "Capitol Hill", "Mission District")</li>
-                                    <li><strong>Or enter a city name</strong> (e.g., "Los Angeles", "Seattle") to add all neighborhoods in that city</li>
-                                    <li><strong>Or enter a state name</strong> (e.g., "California", "Washington") to add all locations in that state</li>
-                                    <li>The system will match against known locations and add them with their zipcodes</li>
-                                    <li>Use the "Restricted Locations" field to specify locations that should NOT be added</li>
-                                    <li>Already-existing locations will appear in the list with an option to EXCLUDE them from your profile</li>
-                                    <li>After processing, use checkboxes to Include (add new) or Exclude (remove existing) locations</li>
-                                    <li>Use "Include All"/"Exclude All" buttons for quick selection</li>
-                                </ul>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="locationModal = false">Close</button>
+                                <button type="button" class="btn btn-secondary"
+                                    (click)="locationModal = false">Close</button>
                             </div>
                         </div>
                     </div>
@@ -56,17 +39,21 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Location List (one per line)</label>
-                            <textarea class="form-control" [(ngModel)]="locationsText" rows="8" placeholder="Enter location names, cities, or states, one per line&#10;Examples:&#10;Downtown&#10;Capitol Hill&#10;Los Angeles&#10;California&#10;Washington"></textarea>
+                            <textarea class="form-control" [(ngModel)]="locationsText" rows="8"
+                                placeholder="Enter location names, cities, or states, one per line&#10;Examples:&#10;Downtown&#10;Capitol Hill&#10;Los Angeles&#10;California&#10;Washington"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Restricted Locations (one per line)</label>
-                            <textarea class="form-control" [(ngModel)]="restrictedLocationsText" rows="3" placeholder="Enter locations to exclude from processing, one per line"></textarea>
-                            <small class="text-muted">Locations listed here will not appear in the results at all</small>
+                            <textarea class="form-control" [(ngModel)]="restrictedLocationsText" rows="3"
+                                placeholder="Enter locations to exclude from processing, one per line"></textarea>
+                            <small class="text-muted">Locations listed here will not appear in the results at
+                                all</small>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" (click)="processLocations()" [disabled]="!locationsText?.trim() || processing">
+                            <button class="btn btn-primary" (click)="processLocations()"
+                                [disabled]="!locationsText?.trim() || processing">
                                 <span *ngIf="processing" class="spinner-border spinner-border-sm me-1"></span>
                                 Process Locations
                             </button>
@@ -119,28 +106,21 @@
                                         <td>{{ loc.state }} ({{ loc.stateShort }})</td>
                                         <td>{{ loc.type }}</td>
                                         <td class="text-center">
-                                            <input type="checkbox" [(ngModel)]="loc.checkedInclude" (change)="onIncludeChange(loc)" [disabled]="loc.isExisting">
+                                            <input type="checkbox" [(ngModel)]="loc.checkedInclude"
+                                                (change)="onIncludeChange(loc)" [disabled]="loc.isExisting">
                                         </td>
                                         <td class="text-center">
-                                            <input type="checkbox" [(ngModel)]="loc.checkedExclude" (change)="onExcludeChange(loc)" [disabled]="!loc.isExisting">
+                                            <input type="checkbox" [(ngModel)]="loc.checkedExclude"
+                                                (change)="onExcludeChange(loc)" [disabled]="!loc.isExisting">
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="alert alert-info mt-3">
-                            <strong>Legend:</strong>
-                            <ul class="mb-0 mt-2">
-                                <li><strong>Include (checked)</strong>: New location will be added to your profile with its zipcodes in service area</li>
-                                <li><strong>Exclude (checked)</strong>: Existing location will be removed from your profile and its zipcodes removed from service area</li>
-                                <li>New locations cannot be excluded (they don't exist yet). Existing locations cannot be included (they already exist).</li>
-                                <li>Selecting both is not allowed - checking one automatically unchecks the other.</li>
-                            </ul>
-                        </div>
-
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                            <button class="btn btn-secondary me-2" (click)="showProcessedList = false; processedLocations = []; locationsText = ''; restrictedLocationsText = '';">
+                            <button class="btn btn-secondary me-2"
+                                (click)="showProcessedList = false; processedLocations = []; locationsText = ''; restrictedLocationsText = '';">
                                 Clear and Start Over
                             </button>
                             <button class="btn btn-success" (click)="saveLocations()" [disabled]="processing">

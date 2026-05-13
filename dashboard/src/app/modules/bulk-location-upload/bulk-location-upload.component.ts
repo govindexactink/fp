@@ -112,10 +112,15 @@ export class BulkLocationUploadComponent implements OnInit {
                     avail.city?.toLowerCase() === inputLower
                 );
             }
+            if (matches.length === 0) {
+                matches = this.availableLocations.filter(avail =>
+                    avail.state?.toLowerCase() === inputLower
+                );
+            }
 
             if (matches.length === 0) {
                 matches = this.availableLocations.filter(avail =>
-                    avail.state?.toLowerCase() === inputLower ||
+                    // avail.state?.toLowerCase() === inputLower ||
                     avail.stateShort?.toLowerCase() === inputLower
                 );
             }
@@ -355,7 +360,7 @@ export class BulkLocationUploadComponent implements OnInit {
             city: location.city,
             state: location.state,
             stateShort: location.stateShort,
-            type: location.type || 'city',
+            type: location.type || 'city' || 'state',
             lead: 0,
             call: 0,
             appointment: 0

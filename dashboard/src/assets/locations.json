@@ -910,34 +910,6 @@
     "type": "state"
   },
   {
-    "location": "Brooklyn",
-    "state": "New York",
-    "type": "state",
-    "stateShort": "NY",
-    "city": "New York"
-  },
-  {
-    "location": "Capitol District",
-    "state": "New York",
-    "type": "state",
-    "stateShort": "NY",
-    "city": "Albany"
-  },
-  {
-    "location": "Harlem",
-    "state": "New York",
-    "type": "state",
-    "stateShort": "NY",
-    "city": "New York"
-  },
-  {
-    "location": "Queens",
-    "state": "New York",
-    "type": "state",
-    "stateShort": "NY",
-    "city": "New York"
-  },
-  {
     "location": "SoHo",
     "state": "New York",
     "type": "state",
@@ -1236,14 +1208,14 @@
     "state": "Texas",
     "stateShort": "TX",
     "city": "San Antonio",
-    "type": "city"
+    "type": "state"
   },
   {
-    "location": "Riverwalk",
+    "location": "l",
     "state": "Texas",
     "stateShort": "TX",
-    "city": "San Antonio",
-    "type": "state"
+    "city": "Texas",
+    "type": "city"
   },
   {
     "location": "Downtown",
