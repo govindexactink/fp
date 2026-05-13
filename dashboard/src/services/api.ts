@@ -60,15 +60,15 @@ export class Api {
       return this.http.delete(`${this.baseUrl}/task/delete-location/${id}`, { body: data });
    }
 
-   // getLocations() {
-   //    return this.http.get<any[]>('assets/locations.json');
-   // }
-   getLocations(name: string): Observable<any> {
-      return this.http.get(
-         `https://api.api-ninjas.com/v1/city?name=${name}`,
-         { headers: { 'X-Api-Key': '8s8SCTGxrk05F1vkL4Bb1ZF9ie2o7eByAM55Lhsa' } }
-      )
+   getLocations() {
+      return this.http.get<any[]>('assets/locations.json');
    }
+   // getLocations(name: string): Observable<any> {
+   //    return this.http.get(
+   //       `https://api.api-ninjas.com/v1/city?name=${name}`,
+   //       { headers: { 'X-Api-Key': '8s8SCTGxrk05F1vkL4Bb1ZF9ie2o7eByAM55Lhsa' } }
+   //    )
+   // }
 
    addUserLocation(userId: string, data: any): Observable<any> {
       return this.http.post(`${this.baseUrl}/user/${userId}/locations`, data, {

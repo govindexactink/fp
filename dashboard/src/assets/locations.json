@@ -4,364 +4,14 @@
     "state": "Alabama",
     "stateShort": "AL",
     "city": "Birmingham",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Alaska",
-    "stateShort": "AK",
-    "city": "Anchorage",
-    "type": "state"
-  },
-  {
-    "location": "Camelback East",
-    "state": "Arizona",
-    "stateShort": "AZ",
-    "city": "Phoenix",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Arkansas",
-    "stateShort": "AR",
-    "city": "Fayetteville",
-    "type": "state"
-  },
-  {
-    "location": "Beverly Hills",
-    "state": "California",
-    "stateShort": "CA",
-    "city": "Los Angeles",
-    "type": "state"
-  },
-  {
-    "location": "Capitol Hill",
-    "state": "Colorado",
-    "stateShort": "CO",
-    "city": "Denver",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Connecticut",
-    "stateShort": "CT",
-    "city": "Hartford",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Delaware",
-    "stateShort": "DE",
-    "city": "Wilmington",
-    "type": "state"
-  },
-  {
-    "location": "Brickell",
-    "state": "Florida",
-    "stateShort": "FL",
-    "city": "Miami",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Georgia",
-    "stateShort": "GA",
-    "city": "Augusta",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Hawaii",
-    "stateShort": "HI",
-    "city": "Honolulu",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Idaho",
-    "stateShort": "ID",
-    "city": "Boise",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Illinois",
-    "stateShort": "IL",
-    "city": "Peoria",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Indiana",
-    "stateShort": "IN",
-    "city": "Evansville",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Iowa",
-    "stateShort": "IA",
-    "city": "Cedar Rapids",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Kansas",
-    "stateShort": "KS",
-    "city": "Overland Park",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Kentucky",
-    "stateShort": "KY",
-    "city": "Lexington",
-    "type": "state"
-  },
-  {
-    "location": "Central City",
-    "state": "Louisiana",
-    "stateShort": "LA",
-    "city": "Baton Rouge",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Maine",
-    "stateShort": "ME",
-    "city": "Bangor",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Maryland",
-    "stateShort": "MD",
-    "city": "Baltimore",
-    "type": "state"
-  },
-  {
-    "location": "Back Bay",
-    "state": "Massachusetts",
-    "stateShort": "MA",
-    "city": "Boston",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Michigan",
-    "stateShort": "MI",
-    "city": "Detroit",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Minnesota",
-    "stateShort": "MN",
-    "city": "Minneapolis",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Mississippi",
-    "stateShort": "MS",
-    "city": "Gulfport",
-    "type": "state"
-  },
-  {
-    "location": "Arts Quarter",
-    "state": "Missouri",
-    "stateShort": "MO",
-    "city": "Columbia",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Montana",
-    "stateShort": "MT",
-    "city": "Billings",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Nebraska",
-    "stateShort": "NE",
-    "city": "Omaha",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Nevada",
-    "stateShort": "NV",
-    "city": "Carson City",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "New Hampshire",
-    "stateShort": "NH",
-    "city": "Manchester",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "New Jersey",
-    "stateShort": "NJ",
-    "city": "Jersey City",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "New Mexico",
-    "stateShort": "NM",
-    "city": "Albuquerque",
-    "type": "state"
-  },
-  {
-    "location": "Brooklyn",
-    "state": "New York",
-    "type": "state",
-    "stateShort": "NY",
-    "city": "New York"
-  },
-  {
-    "location": "Downtown",
-    "state": "North Carolina",
-    "stateShort": "NC",
-    "city": "Charlotte",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "North Dakota",
-    "stateShort": "ND",
-    "city": "Fargo",
-    "type": "state"
-  },
-  {
-    "location": "Central Business District",
-    "state": "Ohio",
-    "stateShort": "OH",
-    "city": "Dayton",
-    "type": "state"
-  },
-  {
-    "location": "Bricktown",
-    "state": "Oklahoma",
-    "stateShort": "OK",
-    "city": "Oklahoma City",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Oregon",
-    "stateShort": "OR",
-    "city": "Eugene",
-    "type": "state"
-  },
-  {
-    "location": "Center City",
-    "state": "Pennsylvania",
-    "stateShort": "PA",
-    "city": "Philadelphia",
-    "type": "state"
-  },
-  {
-    "location": "Puerto Rico",
-    "state": "Puerto Rico",
-    "stateShort": "PR",
-    "city": "Corozal",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Rhode Island",
-    "stateShort": "RI",
-    "city": "Providence",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "South Carolina",
-    "stateShort": "SC",
-    "city": "Charleston",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "South Dakota",
-    "stateShort": "SD",
-    "city": "Rapid City",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Tennessee",
-    "stateShort": "TN",
-    "city": "Knoxville",
-    "type": "state"
-  },
-  {
-    "location": "Arts District",
-    "state": "Texas",
-    "stateShort": "TX",
-    "city": "Lubbock",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Utah",
-    "stateShort": "UT",
-    "city": "Ogden",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Vermont",
-    "stateShort": "VT",
-    "city": "Burlington",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Virginia",
-    "stateShort": "VA",
-    "city": "Norfolk",
-    "type": "state"
-  },
-  {
-    "location": "Capitol Hill",
-    "state": "Washington",
-    "stateShort": "WA",
-    "city": "Seattle",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "West Virginia",
-    "stateShort": "WV",
-    "city": "Charleston",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Wisconsin",
-    "stateShort": "WI",
-    "city": "Madison",
-    "type": "state"
-  },
-  {
-    "location": "Downtown",
-    "state": "Wyoming",
-    "stateShort": "WY",
-    "city": "Cheyenne",
-    "type": "state"
+    "type": "city"
   },
   {
     "location": "Downtown",
     "state": "Alabama",
     "stateShort": "AL",
     "city": "Birmingham",
-    "type": "city"
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -372,10 +22,10 @@
   },
   {
     "location": "Downtown",
-    "state": "Arizona",
-    "stateShort": "AZ",
-    "city": "Chandler",
-    "type": "city"
+    "state": "Alaska",
+    "stateShort": "AK",
+    "city": "Anchorage",
+    "type": "state"
   },
   {
     "location": "Camelback East",
@@ -383,6 +33,13 @@
     "stateShort": "AZ",
     "city": "Phoenix",
     "type": "city"
+  },
+  {
+    "location": "Camelback East",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Phoenix",
+    "type": "state"
   },
   {
     "location": "Central Ave",
@@ -392,11 +49,39 @@
     "type": "city"
   },
   {
+    "location": "Central Ave",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Scottsdale",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Chandler",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arizona",
+    "stateShort": "AZ",
+    "city": "Chandler",
+    "type": "state"
+  },
+  {
     "location": "Downtown",
     "state": "Arkansas",
     "stateShort": "AR",
     "city": "Fayetteville",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Arkansas",
+    "stateShort": "AR",
+    "city": "Fayetteville",
+    "type": "state"
   },
   {
     "location": "River Market",
@@ -406,11 +91,11 @@
     "type": "city"
   },
   {
-    "location": "Downtown",
-    "state": "California",
-    "stateShort": "CA",
-    "city": "Anaheim",
-    "type": "city"
+    "location": "River Market",
+    "state": "Arkansas",
+    "stateShort": "AR",
+    "city": "Little Rock",
+    "type": "state"
   },
   {
     "location": "Beverly Hills",
@@ -420,25 +105,11 @@
     "type": "city"
   },
   {
-    "location": "Harbor Area",
+    "location": "Beverly Hills",
     "state": "California",
     "stateShort": "CA",
-    "city": "Oxnard",
-    "type": "city"
-  },
-  {
-    "location": "Old Town",
-    "state": "California",
-    "stateShort": "CA",
-    "city": "Pasadena",
-    "type": "city"
-  },
-  {
-    "location": "La Jolla",
-    "state": "California",
-    "stateShort": "CA",
-    "city": "San Diego",
-    "type": "city"
+    "city": "Los Angeles",
+    "type": "state"
   },
   {
     "location": "Chinatown",
@@ -448,11 +119,123 @@
     "type": "city"
   },
   {
+    "location": "Chinatown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco",
+    "type": "state"
+  },
+  {
     "location": "Downtown",
-    "state": "Colorado",
-    "stateShort": "CO",
-    "city": "Boulder",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Anaheim",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Anaheim",
+    "type": "state"
+  },
+  {
+    "location": "Harbor Area",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Oxnard",
+    "type": "city"
+  },
+  {
+    "location": "Harbor Area",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Oxnard",
+    "type": "state"
+  },
+  {
+    "location": "Hollywood",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles",
+    "type": "city"
+  },
+  {
+    "location": "Hollywood",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles",
+    "type": "state"
+  },
+  {
+    "location": "La Jolla",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Diego",
+    "type": "city"
+  },
+  {
+    "location": "La Jolla",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Diego",
+    "type": "state"
+  },
+  {
+    "location": "Market Street",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco",
+    "type": "city"
+  },
+  {
+    "location": "Market Street",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco",
+    "type": "state"
+  },
+  {
+    "location": "Mission District",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco",
+    "type": "city"
+  },
+  {
+    "location": "Mission District",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "San Francisco",
+    "type": "state"
+  },
+  {
+    "location": "Old Town",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Pasadena",
+    "type": "city"
+  },
+  {
+    "location": "Old Town",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Pasadena",
+    "type": "state"
+  },
+  {
+    "location": "Santa Monica",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles",
+    "type": "city"
+  },
+  {
+    "location": "Santa Monica",
+    "state": "California",
+    "stateShort": "CA",
+    "city": "Los Angeles",
+    "type": "state"
   },
   {
     "location": "Capitol Hill",
@@ -462,6 +245,41 @@
     "type": "city"
   },
   {
+    "location": "Capitol Hill",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Denver",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Boulder",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Boulder",
+    "type": "state"
+  },
+  {
+    "location": "Pearl Street",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Boulder",
+    "type": "city"
+  },
+  {
+    "location": "Pearl Street",
+    "state": "Colorado",
+    "stateShort": "CO",
+    "city": "Boulder",
+    "type": "state"
+  },
+  {
     "location": "Downtown",
     "state": "Connecticut",
     "stateShort": "CT",
@@ -469,11 +287,25 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Connecticut",
+    "stateShort": "CT",
+    "city": "Hartford",
+    "type": "state"
+  },
+  {
     "location": "Old Town",
     "state": "Connecticut",
     "stateShort": "CT",
     "city": "New Haven",
     "type": "city"
+  },
+  {
+    "location": "Old Town",
+    "state": "Connecticut",
+    "stateShort": "CT",
+    "city": "New Haven",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -484,10 +316,10 @@
   },
   {
     "location": "Downtown",
-    "state": "Florida",
-    "stateShort": "FL",
-    "city": "Fort Lauderdale",
-    "type": "city"
+    "state": "Delaware",
+    "stateShort": "DE",
+    "city": "Wilmington",
+    "type": "state"
   },
   {
     "location": "Brickell",
@@ -497,11 +329,39 @@
     "type": "city"
   },
   {
-    "location": "Midtown",
-    "state": "Georgia",
-    "stateShort": "GA",
-    "city": "Athens",
+    "location": "Brickell",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Miami",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Fort Lauderdale",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Fort Lauderdale",
+    "type": "state"
+  },
+  {
+    "location": "Little Havana",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Miami",
+    "type": "city"
+  },
+  {
+    "location": "Little Havana",
+    "state": "Florida",
+    "stateShort": "FL",
+    "city": "Miami",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -511,11 +371,39 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Augusta",
+    "type": "state"
+  },
+  {
     "location": "Historic District",
     "state": "Georgia",
     "stateShort": "GA",
     "city": "Macon",
     "type": "city"
+  },
+  {
+    "location": "Historic District",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Macon",
+    "type": "state"
+  },
+  {
+    "location": "Midtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Athens",
+    "type": "city"
+  },
+  {
+    "location": "Midtown",
+    "state": "Georgia",
+    "stateShort": "GA",
+    "city": "Athens",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -526,17 +414,24 @@
   },
   {
     "location": "Downtown",
+    "state": "Hawaii",
+    "stateShort": "HI",
+    "city": "Honolulu",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Idaho",
     "stateShort": "ID",
     "city": "Boise",
     "type": "city"
   },
   {
-    "location": "Lincoln Park",
-    "state": "Illinois",
-    "stateShort": "IL",
-    "city": "Chicago",
-    "type": "city"
+    "location": "Downtown",
+    "state": "Idaho",
+    "stateShort": "ID",
+    "city": "Boise",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -546,11 +441,39 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Peoria",
+    "type": "state"
+  },
+  {
+    "location": "Lincoln Park",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Chicago",
+    "type": "city"
+  },
+  {
+    "location": "Lincoln Park",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Chicago",
+    "type": "state"
+  },
+  {
     "location": "South Side",
     "state": "Illinois",
     "stateShort": "IL",
     "city": "Rockford",
     "type": "city"
+  },
+  {
+    "location": "South Side",
+    "state": "Illinois",
+    "stateShort": "IL",
+    "city": "Rockford",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -561,10 +484,24 @@
   },
   {
     "location": "Downtown",
+    "state": "Indiana",
+    "stateShort": "IN",
+    "city": "Evansville",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Iowa",
     "stateShort": "IA",
     "city": "Cedar Rapids",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Iowa",
+    "stateShort": "IA",
+    "city": "Cedar Rapids",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -574,11 +511,11 @@
     "type": "city"
   },
   {
-    "location": "Riverfront",
-    "state": "Kentucky",
-    "stateShort": "KY",
-    "city": "Covington",
-    "type": "city"
+    "location": "Downtown",
+    "state": "Kansas",
+    "stateShort": "KS",
+    "city": "Overland Park",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -588,11 +525,39 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Kentucky",
+    "stateShort": "KY",
+    "city": "Lexington",
+    "type": "state"
+  },
+  {
+    "location": "Riverfront",
+    "state": "Kentucky",
+    "stateShort": "KY",
+    "city": "Covington",
+    "type": "city"
+  },
+  {
+    "location": "Riverfront",
+    "state": "Kentucky",
+    "stateShort": "KY",
+    "city": "Covington",
+    "type": "state"
+  },
+  {
     "location": "Central City",
     "state": "Louisiana",
     "stateShort": "LA",
     "city": "Baton Rouge",
     "type": "city"
+  },
+  {
+    "location": "Central City",
+    "state": "Louisiana",
+    "stateShort": "LA",
+    "city": "Baton Rouge",
+    "type": "state"
   },
   {
     "location": "French District",
@@ -602,6 +567,13 @@
     "type": "city"
   },
   {
+    "location": "French District",
+    "state": "Louisiana",
+    "stateShort": "LA",
+    "city": "Lafayette",
+    "type": "state"
+  },
+  {
     "location": "French Quarter",
     "state": "Louisiana",
     "stateShort": "LA",
@@ -609,11 +581,32 @@
     "type": "city"
   },
   {
+    "location": "French Quarter",
+    "state": "Louisiana",
+    "stateShort": "LA",
+    "city": "New Orleans",
+    "type": "state"
+  },
+  {
     "location": "Downtown",
     "state": "Maine",
     "stateShort": "ME",
     "city": "Bangor",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Maine",
+    "stateShort": "ME",
+    "city": "Bangor",
+    "type": "state"
+  },
+  {
+    "location": "Maine",
+    "state": "Maine",
+    "stateShort": "ME",
+    "city": "Windham",
+    "type": "state"
   },
   {
     "location": "Windham",
@@ -630,6 +623,13 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Maryland",
+    "stateShort": "MD",
+    "city": "Baltimore",
+    "type": "state"
+  },
+  {
     "location": "Back Bay",
     "state": "Massachusetts",
     "stateShort": "MA",
@@ -637,11 +637,18 @@
     "type": "city"
   },
   {
-    "location": "South Egremont",
+    "location": "Back Bay",
+    "state": "Massachusetts",
+    "stateShort": "MA",
+    "city": "Boston",
+    "type": "state"
+  },
+  {
+    "location": "Massachusetts",
     "state": "Massachusetts",
     "stateShort": "MA",
     "city": "South Egremont",
-    "type": "city"
+    "type": "state"
   },
   {
     "location": "North End",
@@ -651,10 +658,17 @@
     "type": "city"
   },
   {
-    "location": "University District",
-    "state": "Michigan",
-    "stateShort": "MI",
-    "city": "Ann Arbor",
+    "location": "North End",
+    "state": "Massachusetts",
+    "stateShort": "MA",
+    "city": "Worcester",
+    "type": "state"
+  },
+  {
+    "location": "South Egremont",
+    "state": "Massachusetts",
+    "stateShort": "MA",
+    "city": "South Egremont",
     "type": "city"
   },
   {
@@ -666,10 +680,38 @@
   },
   {
     "location": "Downtown",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Detroit",
+    "type": "state"
+  },
+  {
+    "location": "University District",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Ann Arbor",
+    "type": "city"
+  },
+  {
+    "location": "University District",
+    "state": "Michigan",
+    "stateShort": "MI",
+    "city": "Ann Arbor",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Minnesota",
     "stateShort": "MN",
     "city": "Minneapolis",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Minnesota",
+    "stateShort": "MN",
+    "city": "Minneapolis",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -679,11 +721,25 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Mississippi",
+    "stateShort": "MS",
+    "city": "Gulfport",
+    "type": "state"
+  },
+  {
     "location": "Arts Quarter",
     "state": "Missouri",
     "stateShort": "MO",
     "city": "Columbia",
     "type": "city"
+  },
+  {
+    "location": "Arts Quarter",
+    "state": "Missouri",
+    "stateShort": "MO",
+    "city": "Columbia",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -694,17 +750,24 @@
   },
   {
     "location": "Downtown",
+    "state": "Missouri",
+    "stateShort": "MO",
+    "city": "Kansas City",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Montana",
     "stateShort": "MT",
     "city": "Billings",
     "type": "city"
   },
   {
-    "location": "Midtown",
-    "state": "Nebraska",
-    "stateShort": "NE",
-    "city": "Lincoln",
-    "type": "city"
+    "location": "Downtown",
+    "state": "Montana",
+    "stateShort": "MT",
+    "city": "Billings",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -715,10 +778,52 @@
   },
   {
     "location": "Downtown",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Omaha",
+    "type": "state"
+  },
+  {
+    "location": "Midtown",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Lincoln",
+    "type": "city"
+  },
+  {
+    "location": "Midtown",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Lincoln",
+    "type": "state"
+  },
+  {
+    "location": "Old Market",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Omaha",
+    "type": "city"
+  },
+  {
+    "location": "Old Market",
+    "state": "Nebraska",
+    "stateShort": "NE",
+    "city": "Omaha",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Nevada",
     "stateShort": "NV",
     "city": "Carson City",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Nevada",
+    "stateShort": "NV",
+    "city": "Carson City",
+    "type": "state"
   },
   {
     "location": "The Strip",
@@ -728,11 +833,32 @@
     "type": "city"
   },
   {
+    "location": "The Strip",
+    "state": "Nevada",
+    "stateShort": "NV",
+    "city": "Las Vegas",
+    "type": "state"
+  },
+  {
     "location": "Downtown",
     "state": "New Hampshire",
     "stateShort": "NH",
     "city": "Manchester",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "New Hampshire",
+    "stateShort": "NH",
+    "city": "Manchester",
+    "type": "state"
+  },
+  {
+    "location": "New Hampshire",
+    "state": "New Hampshire",
+    "stateShort": "NH",
+    "city": "Raymond",
+    "type": "state"
   },
   {
     "location": "Raymond",
@@ -750,10 +876,24 @@
   },
   {
     "location": "Downtown",
+    "state": "New Jersey",
+    "stateShort": "NJ",
+    "city": "Jersey City",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "New Mexico",
     "stateShort": "NM",
     "city": "Albuquerque",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "New Mexico",
+    "stateShort": "NM",
+    "city": "Albuquerque",
+    "type": "state"
   },
   {
     "location": "Historic Downtown",
@@ -763,39 +903,46 @@
     "type": "city"
   },
   {
-    "location": "Capitol District",
-    "state": "New York",
-    "stateShort": "NY",
-    "city": "Albany",
-    "type": "city"
+    "location": "Historic Downtown",
+    "state": "New Mexico",
+    "stateShort": "NM",
+    "city": "Santa Fe",
+    "type": "state"
   },
   {
     "location": "Brooklyn",
     "state": "New York",
+    "type": "state",
     "stateShort": "NY",
-    "city": "New York",
-    "type": "city"
+    "city": "New York"
+  },
+  {
+    "location": "Capitol District",
+    "state": "New York",
+    "type": "state",
+    "stateShort": "NY",
+    "city": "Albany"
   },
   {
     "location": "Harlem",
     "state": "New York",
+    "type": "state",
     "stateShort": "NY",
-    "city": "New York",
-    "type": "city"
+    "city": "New York"
   },
   {
     "location": "Queens",
     "state": "New York",
+    "type": "state",
     "stateShort": "NY",
-    "city": "New York",
-    "type": "city"
+    "city": "New York"
   },
   {
     "location": "SoHo",
     "state": "New York",
+    "type": "state",
     "stateShort": "NY",
-    "city": "New York",
-    "type": "city"
+    "city": "New York"
   },
   {
     "location": "Downtown",
@@ -805,11 +952,25 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "North Carolina",
+    "stateShort": "NC",
+    "city": "Charlotte",
+    "type": "state"
+  },
+  {
     "location": "Uptown",
     "state": "North Carolina",
     "stateShort": "NC",
     "city": "Greensboro",
     "type": "city"
+  },
+  {
+    "location": "Uptown",
+    "state": "North Carolina",
+    "stateShort": "NC",
+    "city": "Greensboro",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -819,25 +980,11 @@
     "type": "city"
   },
   {
-    "location": "Warehouse District",
-    "state": "Ohio",
-    "stateShort": "OH",
-    "city": "Akron",
-    "type": "city"
-  },
-  {
     "location": "Downtown",
-    "state": "Ohio",
-    "stateShort": "OH",
-    "city": "Cincinnati",
-    "type": "city"
-  },
-  {
-    "location": "Short North",
-    "state": "Ohio",
-    "stateShort": "OH",
-    "city": "Columbus",
-    "type": "city"
+    "state": "North Dakota",
+    "stateShort": "ND",
+    "city": "Fargo",
+    "type": "state"
   },
   {
     "location": "Central Business District",
@@ -847,11 +994,81 @@
     "type": "city"
   },
   {
+    "location": "Central Business District",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Dayton",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Cincinnati",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Cincinnati",
+    "type": "state"
+  },
+  {
+    "location": "Short North",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Columbus",
+    "type": "city"
+  },
+  {
+    "location": "Short North",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Columbus",
+    "type": "state"
+  },
+  {
+    "location": "Warehouse District",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Akron",
+    "type": "city"
+  },
+  {
+    "location": "Warehouse District",
+    "state": "Ohio",
+    "stateShort": "OH",
+    "city": "Akron",
+    "type": "state"
+  },
+  {
     "location": "Bricktown",
     "state": "Oklahoma",
     "stateShort": "OK",
     "city": "Oklahoma City",
     "type": "city"
+  },
+  {
+    "location": "Bricktown",
+    "state": "Oklahoma",
+    "stateShort": "OK",
+    "city": "Oklahoma City",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Oklahoma",
+    "stateShort": "OK",
+    "city": "Oklahoma City",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Oklahoma",
+    "stateShort": "OK",
+    "city": "Oklahoma City",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -861,17 +1078,17 @@
     "type": "city"
   },
   {
+    "location": "Downtown",
+    "state": "Oregon",
+    "stateShort": "OR",
+    "city": "Eugene",
+    "type": "state"
+  },
+  {
     "location": "Pearl District",
     "state": "Oregon",
     "stateShort": "OR",
     "city": "Portland",
-    "type": "city"
-  },
-  {
-    "location": "Downtown",
-    "state": "Pennsylvania",
-    "stateShort": "PA",
-    "city": "Erie",
     "type": "city"
   },
   {
@@ -882,11 +1099,39 @@
     "type": "city"
   },
   {
+    "location": "Center City",
+    "state": "Pennsylvania",
+    "stateShort": "PA",
+    "city": "Philadelphia",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Pennsylvania",
+    "stateShort": "PA",
+    "city": "Erie",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Pennsylvania",
+    "stateShort": "PA",
+    "city": "Erie",
+    "type": "state"
+  },
+  {
     "location": "Corozal",
     "state": "Puerto Rico",
     "stateShort": "PR",
     "city": "Corozal",
     "type": "city"
+  },
+  {
+    "location": "Puerto Rico",
+    "state": "Puerto Rico",
+    "stateShort": "PR",
+    "city": "Corozal",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -897,10 +1142,24 @@
   },
   {
     "location": "Downtown",
+    "state": "Rhode Island",
+    "stateShort": "RI",
+    "city": "Providence",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "South Carolina",
     "stateShort": "SC",
     "city": "Charleston",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "South Carolina",
+    "stateShort": "SC",
+    "city": "Charleston",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -911,6 +1170,13 @@
   },
   {
     "location": "Downtown",
+    "state": "South Dakota",
+    "stateShort": "SD",
+    "city": "Rapid City",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Tennessee",
     "stateShort": "TN",
     "city": "Knoxville",
@@ -918,10 +1184,10 @@
   },
   {
     "location": "Downtown",
-    "state": "Texas",
-    "stateShort": "TX",
-    "city": "Arlington",
-    "type": "city"
+    "state": "Tennessee",
+    "stateShort": "TN",
+    "city": "Knoxville",
+    "type": "state"
   },
   {
     "location": "Arts District",
@@ -931,6 +1197,27 @@
     "type": "city"
   },
   {
+    "location": "Arts District",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Lubbock",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Arlington",
+    "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Arlington",
+    "type": "state"
+  },
+  {
     "location": "Midtown",
     "state": "Texas",
     "stateShort": "TX",
@@ -938,11 +1225,25 @@
     "type": "city"
   },
   {
+    "location": "Midtown",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "Plano",
+    "type": "state"
+  },
+  {
     "location": "Riverwalk",
     "state": "Texas",
     "stateShort": "TX",
     "city": "San Antonio",
     "type": "city"
+  },
+  {
+    "location": "Riverwalk",
+    "state": "Texas",
+    "stateShort": "TX",
+    "city": "San Antonio",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -953,17 +1254,24 @@
   },
   {
     "location": "Downtown",
+    "state": "Utah",
+    "stateShort": "UT",
+    "city": "Ogden",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Vermont",
     "stateShort": "VT",
     "city": "Burlington",
     "type": "city"
   },
   {
-    "location": "Old Town",
-    "state": "Virginia",
-    "stateShort": "VA",
-    "city": "Alexandria",
-    "type": "city"
+    "location": "Downtown",
+    "state": "Vermont",
+    "stateShort": "VT",
+    "city": "Burlington",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -973,11 +1281,25 @@
     "type": "city"
   },
   {
-    "location": "Central District",
-    "state": "Washington",
-    "stateShort": "WA",
-    "city": "Bellevue",
+    "location": "Downtown",
+    "state": "Virginia",
+    "stateShort": "VA",
+    "city": "Norfolk",
+    "type": "state"
+  },
+  {
+    "location": "Old Town",
+    "state": "Virginia",
+    "stateShort": "VA",
+    "city": "Alexandria",
     "type": "city"
+  },
+  {
+    "location": "Old Town",
+    "state": "Virginia",
+    "stateShort": "VA",
+    "city": "Alexandria",
+    "type": "state"
   },
   {
     "location": "Capitol Hill",
@@ -985,6 +1307,27 @@
     "stateShort": "WA",
     "city": "Seattle",
     "type": "city"
+  },
+  {
+    "location": "Capitol Hill",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Seattle",
+    "type": "state"
+  },
+  {
+    "location": "Central District",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Bellevue",
+    "type": "city"
+  },
+  {
+    "location": "Central District",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Bellevue",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -995,10 +1338,24 @@
   },
   {
     "location": "Downtown",
+    "state": "Washington",
+    "stateShort": "WA",
+    "city": "Spokane",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "West Virginia",
     "stateShort": "WV",
     "city": "Charleston",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "West Virginia",
+    "stateShort": "WV",
+    "city": "Charleston",
+    "type": "state"
   },
   {
     "location": "Downtown",
@@ -1009,9 +1366,23 @@
   },
   {
     "location": "Downtown",
+    "state": "Wisconsin",
+    "stateShort": "WI",
+    "city": "Madison",
+    "type": "state"
+  },
+  {
+    "location": "Downtown",
     "state": "Wyoming",
     "stateShort": "WY",
     "city": "Cheyenne",
     "type": "city"
+  },
+  {
+    "location": "Downtown",
+    "state": "Wyoming",
+    "stateShort": "WY",
+    "city": "Cheyenne",
+    "type": "state"
   }
 ]

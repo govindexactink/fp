@@ -3,7 +3,7 @@ const ZipcodeOverride = require("../model/zipcodePriceOverrideModel");
 const LocationPrice = require("../model/locationPriceModel");
 const Task = require("../model/taskModel");
 const jwt = require("jsonwebtoken");
-const { resolveLocationZipcodes } = require("./locationService");
+const { resolveLocationZipcodes, getLocations } = require("./locationService");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
@@ -270,49 +270,151 @@ const updateLocation = async (userId, locationId, updateData) => {
   return location;
 };
 
+// const deleteLocation = async (userId, locationId) => {
+//   const user = await User.findById(userId);
+//   if (!user) throw { status: 404, message: "User not found" };
+//   const location = user.locations.id(locationId);
+//   if (!location) throw { status: 404, message: "Location not found" };
+
+//   // Resolve all zipcodes for this location (city/state) from Zipcode collection
+//   const locationZipcodes = await resolveLocationZipcodes(location);
+
+//   // Remove these zipcodes from service_areas_zipcodes
+//   if (locationZipcodes.length > 0) {
+//     user.service_areas_zipcodes = user.service_areas_zipcodes.filter(
+//       (zip) => !locationZipcodes.includes(zip)
+//     );
+//   }
+
+//   // Remove these zipcodes from unselected_zipcodes
+//   if (locationZipcodes.length > 0) {
+//     user.unselected_zipcodes = user.unselected_zipcodes.filter(
+//       (zip) => !locationZipcodes.includes(zip)
+//     );
+//   }
+
+//   // Delete all zipcode price overrides for these zipcodes
+//   if (locationZipcodes.length > 0) {
+//     await ZipcodeOverride.deleteMany({
+//       userId,
+//       zipcode: { $in: locationZipcodes }
+//     });
+//   }
+
+//   // Delete all location prices for this location (city/state/type)
+//   const locationType = location.type || 'city';
+//   await LocationPrice.deleteMany({
+//     userId,
+//     city: location.city,
+//     state: location.state,
+//     type: locationType
+//   });
+
+//   // Delete the location
+//   location.deleteOne();
+//   await user.save();
+//   return { message: "Location deleted successfully" };
+// };
+
 const deleteLocation = async (userId, locationId) => {
   const user = await User.findById(userId);
   if (!user) throw { status: 404, message: "User not found" };
+
   const location = user.locations.id(locationId);
   if (!location) throw { status: 404, message: "Location not found" };
 
-  // Resolve all zipcodes for this location (city/state) from Zipcode collection
+  // ── STEP 1: Resolve zipcodes for the location being deleted ──────────────
   const locationZipcodes = await resolveLocationZipcodes(location);
 
-  // Remove these zipcodes from service_areas_zipcodes
+  // ── STEP 2: Get remaining locations (all except the one being deleted) ────
+  const remainingLocations = user.locations.filter(
+    (loc) => loc._id.toString() !== locationId.toString()
+  );
+
+  // ── STEP 3: Fetch zipcodes for ALL remaining locations ───────────────────
+  let remainingZipcodes = [];
+  if (remainingLocations.length > 0) {
+    const supportedLocations = remainingLocations.filter(
+      (loc) => loc.type === "city" || loc.type === "state"
+    );
+
+    if (supportedLocations.length > 0) {
+      const remainingResults = await getLocations(
+        supportedLocations.map((loc) => ({
+          type: loc.type,
+          city: loc.city,
+          state: loc.state,
+          stateShort: loc.stateShort,
+          description: loc.description,
+          location: loc.description,
+          lead: null,
+          call: null,
+          appointment: null,
+        }))
+      );
+      remainingResults.forEach((r) => {
+        remainingZipcodes.push(...r.zipcodes);
+      });
+      // Deduplicate
+      remainingZipcodes = [...new Set(remainingZipcodes)];
+    }
+  }
+
+  // ── STEP 4: Snapshot current unselected_zipcodes BEFORE any cleanup ───────
+  const previouslyUnselected = new Set(user.unselected_zipcodes);
+
+  // ── STEP 5: Remove deleted location's zipcodes from service_areas & unselected
   if (locationZipcodes.length > 0) {
     user.service_areas_zipcodes = user.service_areas_zipcodes.filter(
       (zip) => !locationZipcodes.includes(zip)
     );
-  }
-
-  // Remove these zipcodes from unselected_zipcodes
-  if (locationZipcodes.length > 0) {
     user.unselected_zipcodes = user.unselected_zipcodes.filter(
       (zip) => !locationZipcodes.includes(zip)
     );
   }
 
-  // Delete all zipcode price overrides for these zipcodes
+  // ── STEP 6: Rebuild service_areas_zipcodes from remaining locations ────────
+  // Set it fresh from all remaining location zipcodes
+  user.service_areas_zipcodes = remainingZipcodes;
+
+  // ── STEP 7: Restore unselected_zipcodes from snapshot ────────────────────
+  // If a zipcode from remaining locations was previously unselected by the user,
+  // put it back into unselected_zipcodes and remove from service_areas_zipcodes
+  const restoredUnselected = [];
+
+  for (const zip of remainingZipcodes) {
+    if (previouslyUnselected.has(zip)) {
+      restoredUnselected.push(zip);
+      // Remove from service_areas since user had unselected it
+      user.service_areas_zipcodes = user.service_areas_zipcodes.filter(
+        (z) => z !== zip
+      );
+    }
+  }
+
+  user.unselected_zipcodes = restoredUnselected;
+
+  // ── STEP 8: Delete zipcode price overrides for deleted location's zipcodes ─
   if (locationZipcodes.length > 0) {
     await ZipcodeOverride.deleteMany({
       userId,
-      zipcode: { $in: locationZipcodes }
+      zipcode: { $in: locationZipcodes },
     });
   }
 
-  // Delete all location prices for this location (city/state/type)
-  const locationType = location.type || 'city';
+  // ── STEP 9: Delete location prices for the deleted location ───────────────
+  const locationType = location.type || "city";
   await LocationPrice.deleteMany({
     userId,
     city: location.city,
     state: location.state,
-    type: locationType
+    type: locationType,
   });
 
-  // Delete the location
+  // ── STEP 10: Delete the location and save ─────────────────────────────────
   location.deleteOne();
   await user.save();
+
   return { message: "Location deleted successfully" };
 };
 
