@@ -51,6 +51,26 @@ const LocationSchema = new mongoose.Schema({
   unit: { type: String, default: null },     // e.g. "Miles"
 });
 
+const ExcludedLocationSchema = new mongoose.Schema({
+  description: { type: String, required: true, trim: true },
+  city: { type: String, default: '', trim: true },
+  state: { type: String, default: '', trim: true },
+  stateShort: { type: String, default: '', trim: true },
+  country: { type: String, default: '', trim: true },
+  //  zipcode: { type: String, default: null, trim: true },
+  // zipcodes: {
+  //   type: [String],
+  //   default: []
+  // },
+  type: {
+    type: String,
+    enum: ['city', 'state', 'zipcode', 'country', 'radius'],
+    required: true
+  },
+  radius: { type: Number, default: null },   // numeric radius, e.g. 20
+  unit: { type: String, default: null },     // e.g. "Miles"
+});
+
 
 
 const userSchema = new mongoose.Schema(
@@ -87,6 +107,7 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
     locations: [LocationSchema],
+    excludedLocations: [ExcludedLocationSchema],
     categories: [categorySchema],
     isActive: { type: Boolean, default: true },
     isAdminLogin: { type: Boolean, default: false },  // true if an admin is currently logged into this user account

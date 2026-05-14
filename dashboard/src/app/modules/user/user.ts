@@ -213,8 +213,14 @@ export class User implements OnInit {
         this.showLocationModal = false;
     }
 
-    addLocation() {
+    addLocation(loc?: any, action: 'include' | 'exclude' = 'include') {
+        this.selectLocation(loc); // Clear selection to reset state
         this.locationModalError = '';
+        if (action === 'include') {
+            action = 'include';
+        } else {
+            action = 'exclude';
+        }
 
         if (!this.selectedLocation) {
             this.locationModalError = 'Please choose a location before saving.';
@@ -232,15 +238,20 @@ export class User implements OnInit {
             zipcode: null,
             type: this.selectedLocation.type || 'city',
             stateShort: this.selectedLocation.stateShort || '',
-            zipcodes: []
+            zipcodes: [],
+            action: action
         };
 
         this.api.addUserLocation(userId, locationPayload).subscribe({
             next: () => {
-                this.addZipcodesToServiceArea(this.selectedLocation);
-                this.closeLocationModal();
-                this.loadUserData();
-                this.cdr.markForCheck();
+                setTimeout(() => {
+                    if (action === 'include') {
+                        this.addZipcodesToServiceArea(this.selectedLocation);
+                    }
+                    this.closeLocationModal();
+                    this.loadUserData();
+                    this.cdr.markForCheck();
+                }, 500);
             },
             error: err => {
                 console.error('Failed to add location', err);
@@ -993,6 +1004,16 @@ export class User implements OnInit {
                 ].filter(Boolean).join('|')
             )
         );
+        const excludedKeys = new Set(
+            (this.userData.excludedLocations || []).map((loc: any) =>
+                [
+                    loc.description?.toLowerCase(),
+                    loc.city?.toLowerCase(),
+                    loc.state?.toLowerCase(),
+                    loc.type?.toLowerCase()
+                ].filter(Boolean).join('|')
+            )
+        );
 
         this.filteredLocations = this.availableLocations.filter(loc => {
             const matchesSearch =
@@ -1007,7 +1028,7 @@ export class User implements OnInit {
                 loc.type?.toLowerCase()
             ].filter(Boolean).join('|');
 
-            const alreadyAdded = existingKeys.has(locKey);
+            const alreadyAdded = existingKeys.has(locKey) || excludedKeys.has(locKey);
 
             return matchesSearch && !alreadyAdded;
         });

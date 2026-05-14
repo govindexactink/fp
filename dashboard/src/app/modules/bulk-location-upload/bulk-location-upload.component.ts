@@ -207,13 +207,24 @@ export class BulkLocationUploadComponent implements OnInit {
 
         const locationsToAdd = this.processedLocations.filter(loc => loc.checkedInclude && !loc.checkedExclude && !loc.isExisting);
         const locationsToRemove = this.processedLocations.filter(loc => loc.checkedExclude && loc.isExisting);
+        const locationsToExclude = this.processedLocations.filter(loc => loc.checkedExclude && !loc.isExisting);
 
-        if (locationsToAdd.length === 0 && locationsToRemove.length === 0) {
-            this.processError = 'Please select at least one location to add or remove.';
+        if (locationsToAdd.length === 0 && locationsToRemove.length === 0 && locationsToExclude.length === 0) {
+            this.processError = 'Please select at least one location to add, exclude, or remove.';
             return;
         }
 
         this.processing = true;
+
+        // Build excluded locations array (jo uncheck kiye hain)
+        const excludedLocationsArray = locationsToExclude.map(loc => ({
+            location: loc.location,
+            city: loc.city,
+            state: loc.state,
+            country: '',
+            type: loc.type || 'city',
+            stateShort: loc.stateShort
+        }));
 
         // Handle additions in bulk
         if (locationsToAdd.length > 0) {
@@ -225,8 +236,12 @@ export class BulkLocationUploadComponent implements OnInit {
                     country: '',
                     type: loc.type || 'city',
                     stateShort: loc.stateShort
-                }))
+                })),
+                // ✅ Excluded locations add ho rahe hain payload mein
+                excludedLocations: excludedLocationsArray
             };
+
+            console.log('Bulk Add Payload with Excluded:', bulkPayload);
 
             this.api.addBulkUserLocations(this.userData._id, bulkPayload).subscribe({
                 next: (res: any) => {
@@ -245,8 +260,21 @@ export class BulkLocationUploadComponent implements OnInit {
                 }
             });
         } else {
-            // Only removals
-            this.processRemovals(locationsToRemove);
+            // Only removals or only exclusions (without additions)
+            if (locationsToExclude.length > 0) {
+                const excludePayload = {
+                    excludedLocations: excludedLocationsArray
+                };
+                console.log('Exclude Only Payload:', excludePayload);
+                // Agar sirf exclude karna hai to API call karo (optional)
+            }
+
+            if (locationsToRemove.length > 0) {
+                this.processRemovals(locationsToRemove);
+            } else {
+                // Sirf exclude karna tha
+                this.finishSave();
+            }
         }
     }
 

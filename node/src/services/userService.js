@@ -11,7 +11,7 @@ const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
 // ─── AUTH SERVICES ──────────────────────────────────────────────
 
 const registerUser = async (data) => {
-  const { username, email, password, categories = [], locations = [], service_areas_zipcodes = [] } = data;
+  const { username, email, password, categories = [], locations = [], excludedLocations = [], service_areas_zipcodes = [] } = data;
 
 
   const existing = await User.findOne({ $or: [{ email }, { username }] });
@@ -26,6 +26,7 @@ const registerUser = async (data) => {
     password,
     categories,
     locations,
+    excludedLocations,
     service_areas_zipcodes
   });
 
@@ -255,9 +256,13 @@ const deleteFilter = async (userId, categoryId, taskId, filterId) => {
 const addLocation = async (userId, locationData) => {
   const user = await User.findById(userId);
   if (!user) throw { status: 404, message: "User not found" };
-  user.locations.push(locationData);
+  if (locationData?.action === 'exclude') {
+    user.excludedLocations.push(locationData);
+  } else {
+    user.locations.push(locationData);
+  }
   await user.save();
-  return user.locations[user.locations.length - 1];
+  return user.locations[user.locations.length - 1] || user.excludedLocations[user.excludedLocations.length - 1];
 };
 
 const updateLocation = async (userId, locationId, updateData) => {
@@ -320,9 +325,10 @@ const deleteLocation = async (userId, locationId) => {
   const user = await User.findById(userId);
   if (!user) throw { status: 404, message: "User not found" };
 
-  const location = user.locations.id(locationId);
-  if (!location) throw { status: 404, message: "Location not found" };
-
+  const location = user.locations.id(locationId) || user.excludedLocations.id(locationId);
+  if (!location) {
+    throw { status: 404, message: "Location not found" };
+  }
   // ── STEP 1: Resolve zipcodes for the location being deleted ──────
   const locationZipcodes = await resolveLocationZipcodes(location);
 
@@ -419,7 +425,7 @@ const deleteLocation = async (userId, locationId) => {
 };
 
 const addBulkLocationsToUser = async (userId, payload) => {
-  const { locations } = payload;
+  const { locations, excludedLocations } = payload;
 
   console.log("Adding bulk locations for userId:", userId);
   console.log("Locations to add1234:", locations);
@@ -427,6 +433,12 @@ const addBulkLocationsToUser = async (userId, payload) => {
   // 1. Validate input
   for (const loc of locations) {
     if (!loc.city || !loc.state || !loc.type) {
+      throw { status: 400, message: "Each location must have city, state, and type" };
+    }
+  }
+
+  for (const exLoc of excludedLocations) {
+    if (!exLoc.city || !exLoc.state || !exLoc.type) {
       throw { status: 400, message: "Each location must have city, state, and type" };
     }
   }
@@ -449,8 +461,24 @@ const addBulkLocationsToUser = async (userId, payload) => {
     unit: loc.unit || null
   }));
 
+  // 3. Prepare new location documents
+  const newExLocations = excludedLocations.map(exLoc => ({
+    description: exLoc.location || exLoc.description,
+    city: exLoc.city,
+    state: exLoc.state,
+    stateShort: exLoc.stateShort || '',
+    country: exLoc.country || '',
+    type: exLoc.type || 'city',
+    radius: exLoc.radius || null,
+    unit: exLoc.unit || null
+  }));
+
+
   // 4. Push to user.locations array
   user.locations.push(...newLocations);
+
+  // 4. Push to user.locations array
+  user.excludedLocations.push(...newExLocations);
 
   // 5. Resolve zipcodes for all new locations
   const allNewZipcodes = new Set();
@@ -474,7 +502,8 @@ const addBulkLocationsToUser = async (userId, payload) => {
   return {
     locationsAdded: newLocations.length,
     zipcodesAdded: allNewZipcodes.size,
-    locations: newLocations
+    locations: newLocations,
+    excludedLocations: newExLocations
   };
 };
 
