@@ -4,6 +4,7 @@ const LocationPrice = require("../model/locationPriceModel");
 const Task = require("../model/taskModel");
 const jwt = require("jsonwebtoken");
 const { resolveLocationZipcodes, getLocations } = require("./locationService");
+const Zipcode = require("../model/zipcodesModel");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
@@ -424,8 +425,24 @@ const deleteLocation = async (userId, locationId) => {
   return { message: "Location deleted successfully" };
 };
 
+const resolveLocationZipcodesinEX = async (location) => {
+  if (!location || !location.type) {
+    return [];
+  }
+
+  const query = location.type === 'state'
+    ? { state: { $regex: `^${location.stateShort || location.state}$`, $options: 'i' } }
+    : { primary_city: { $regex: `^${location.city}$`, $options: 'i' } };
+
+  console.log("query", query);
+  const data = await Zipcode.find(query, { zip: 1, _id: 0 });
+  return [...new Set(data.map(d => d.zip))];
+};
+
+
 const addBulkLocationsToUser = async (userId, payload) => {
   const { locations, excludedLocations } = payload;
+  console.log("payload", payload);
 
   console.log("Adding bulk locations for userId:", userId);
   console.log("Locations to add1234:", locations);
@@ -474,26 +491,67 @@ const addBulkLocationsToUser = async (userId, payload) => {
   }));
 
 
+  // // 4. Push to user.locations array
+  // user.locations.push(...newLocations);
+
+  // // 4. Push to user.excludedLocations array
+  // user.excludedLocations.push(...newExLocations);
+
+  // // 5. Resolve zipcodes for all new locations
+  // const allNewZipcodes = new Set();
+  // const allNewExcludedZipcodes = new Set();
+
+  // for (const loc of newLocations) {
+  //   const zipcodes = await resolveLocationZipcodesinEX(loc);
+  //   zipcodes.forEach(z => allNewZipcodes.add(z));
+  // }
+  // for (const loc of newExLocations) {
+  //   const zipcodes = await resolveLocationZipcodesinEX(loc);
+  //   zipcodes.forEach(z => allNewExcludedZipcodes.add(z));
+  // }
+
+  // // 6. Update user.service_areas_zipcodes
+  // const currentZipcodes = new Set(user.service_areas_zipcodes || []);
+  // allNewZipcodes.forEach(z => currentZipcodes.add(z));
+  // user.service_areas_zipcodes = Array.from(currentZipcodes);
+
+  // // 7. Save user
+  // await user.save();
   // 4. Push to user.locations array
   user.locations.push(...newLocations);
 
-  // 4. Push to user.locations array
+  // 4. Push to user.excludedLocations array
   user.excludedLocations.push(...newExLocations);
 
   // 5. Resolve zipcodes for all new locations
   const allNewZipcodes = new Set();
+  const allNewExcludedZipcodes = new Set();
 
   for (const loc of newLocations) {
-    const zipcodes = await resolveLocationZipcodes(loc);
+    const zipcodes = await resolveLocationZipcodesinEX(loc);
     zipcodes.forEach(z => allNewZipcodes.add(z));
   }
 
-  // 6. Update user.service_areas_zipcodes
+  for (const loc of newExLocations) {
+    const zipcodes = await resolveLocationZipcodesinEX(loc);
+    zipcodes.forEach(z => allNewExcludedZipcodes.add(z));
+  }
+
+  // 6. Filter out zipcodes that are in excluded list
+  const filteredZipcodes = new Set();
+  allNewZipcodes.forEach(z => {
+    // Agar zipcode excluded list mein nahi hai, to add karo
+    if (!allNewExcludedZipcodes.has(z)) {
+      filteredZipcodes.add(z);
+    }
+  });
+
+  // 7. Update user.service_areas_zipcodes
   const currentZipcodes = new Set(user.service_areas_zipcodes || []);
-  allNewZipcodes.forEach(z => currentZipcodes.add(z));
+  filteredZipcodes.forEach(z => currentZipcodes.add(z));
   user.service_areas_zipcodes = Array.from(currentZipcodes);
 
-  // 7. Save user
+  // 8. Save user
   await user.save();
 
   console.log("Total locations added:", newLocations.length);
