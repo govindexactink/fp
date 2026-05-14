@@ -51,7 +51,7 @@ exports.getUserById = globle.asyncHandler(async (req, res) => {
 });
 
 exports.updateUser = globle.asyncHandler(async (req, res) => {
-  const user = await userService.updateUser(req.params.userId, req.body);
+  const user = await userService.updateUserByinex(req.params.userId, req.body);
   globle.sendResponse(res, 200, "User updated", user);
 });
 
@@ -175,25 +175,25 @@ exports.deleteFilter = globle.asyncHandler(async (req, res) => {
 // ─── LOCATIONS ───────────────────────────────────────────────────
 
 exports.addLocation = globle.asyncHandler(async (req, res) => {
-    const location = await userService.addLocation(req.params.userId, req.body);
-    globle.sendResponse(res, 201, "Location added", location);
+  const location = await userService.addLocation(req.params.userId, req.body);
+  globle.sendResponse(res, 201, "Location added", location);
 });
 
 exports.updateLocation = globle.asyncHandler(async (req, res) => {
-    const location = await userService.updateLocation(
-        req.params.userId, req.params.locationId, req.body
-    );
-    globle.sendResponse(res, 200, "Location updated", location);
+  const location = await userService.updateLocation(
+    req.params.userId, req.params.locationId, req.body
+  );
+  globle.sendResponse(res, 200, "Location updated", location);
 });
 
 exports.deleteLocation = globle.asyncHandler(async (req, res) => {
-    const result = await userService.deleteLocation(req.params.userId, req.params.locationId);
-    globle.sendResponse(res, 200, result.message);
+  const result = await userService.deleteLocation(req.params.userId, req.params.locationId);
+  globle.sendResponse(res, 200, result.message);
 });
 
 exports.addBulkLocations = globle.asyncHandler(async (req, res) => {
-    const result = await userService.addBulkLocationsToUser(req.params.userId, req.body);
-    globle.sendResponse(res, 201, "Bulk locations added", result);
+  const result = await userService.addBulkLocationsToUser(req.params.userId, req.body);
+  globle.sendResponse(res, 201, "Bulk locations added", result);
 });
 exports.addZipcodePriceOverride = globle.asyncHandler(async (req, res) => {
   const result = await userService.addOrUpdateZipcodePriceOverride(req.params.userId, req.body);

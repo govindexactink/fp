@@ -84,6 +84,90 @@ const updateUser = async (userId, updateData) => {
   return user;
 };
 
+export const updateUserByinex = async (userId, updateData) => {
+
+  const forbidden = ["password", "role", "_id"];
+  forbidden.forEach((f) => delete updateData[f]);
+
+  // Fetch user
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw { status: 404, message: "User not found" };
+  }
+
+  /*
+  =========================================================
+  SAME LOGIC AS addBulkLocationsToUser
+  =========================================================
+  */
+
+  // Resolve zipcodes for all locations
+  const allNewZipcodes = new Set();
+  const allNewExcludedZipcodes = new Set();
+
+  // Get zipcodes from user.locations
+  for (const loc of (user.locations || [])) {
+
+    const zipcodes = await resolveLocationZipcodesinEX(loc);
+
+    zipcodes.forEach(z => allNewZipcodes.add(z));
+  }
+
+  // Get zipcodes from user.excludedLocations
+  for (const exLoc of (user.excludedLocations || [])) {
+
+    const zipcodes = await resolveLocationZipcodesinEX(exLoc);
+
+    zipcodes.forEach(z => allNewExcludedZipcodes.add(z));
+  }
+
+  /*
+  =========================================================
+  REMOVE EXCLUDED ZIPCODES
+  =========================================================
+  */
+
+  const filteredZipcodes = new Set();
+
+  allNewZipcodes.forEach(z => {
+
+    // Agar excluded zipcodes me nahi hai
+    if (!allNewExcludedZipcodes.has(z)) {
+
+      // Agar unselected_zipcodes me nahi hai
+      if (!(user.unselected_zipcodes || []).includes(z)) {
+
+        filteredZipcodes.add(z);
+      }
+    }
+  });
+
+  /*
+  =========================================================
+  UPDATE service_areas_zipcodes
+  =========================================================
+  */
+
+  updateData.service_areas_zipcodes = Array.from(filteredZipcodes);
+
+  // Final update
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    updateData,
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  if (!updatedUser) {
+    throw { status: 404, message: "User not found" };
+  }
+
+  return updatedUser;
+};
+
 const updateUnselectedZipcodes = async (userId, updateData) => {
   const allowed = ["service_areas_zipcodes", "unselected_zipcodes"];
   const payload = {};
@@ -899,7 +983,7 @@ const sanitizeUser = (user) => {
 
 module.exports = {
   registerUser, loginUser,
-  getAllUsers, getUserById, updateUser, deleteUser, updateUserStatus,
+  getAllUsers, getUserById, updateUser, updateUserByinex, deleteUser, updateUserStatus,
   addCategory, updateCategory, deleteCategory,
   addTask, updateTask, toggleTaskChecked, deleteTask,
   addFilter, updateFilter, toggleFilterChecked, deleteFilter,
