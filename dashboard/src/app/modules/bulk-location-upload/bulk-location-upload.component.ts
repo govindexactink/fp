@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Api } from '../../../services/api';
@@ -31,11 +31,12 @@ export class BulkLocationUploadComponent implements OnInit {
 
     @Output() onClose = new EventEmitter<void>();
 
-    constructor(private api: Api) { }
+    constructor(private api: Api, private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.loadUserData();
         this.loadLocations();
+        this.cdr.markForCheck();
     }
 
     loadUserData() {
@@ -96,6 +97,8 @@ export class BulkLocationUploadComponent implements OnInit {
             userLocationsMap.set(loc.description.toLowerCase(), loc);
         });
 
+        let skippedExistingCount = 0;
+
         lines.forEach((input: string) => {
             const inputLower = input.toLowerCase();
 
@@ -103,56 +106,34 @@ export class BulkLocationUploadComponent implements OnInit {
                 return;
             }
 
-            let matches = this.availableLocations.filter(avail =>
-                avail.location?.toLowerCase() === inputLower
+            // Match by location name, city, state, or stateShort (case-insensitive)
+            const matches = this.availableLocations.filter(avail =>
+                avail.location?.toLowerCase().includes(inputLower) ||
+                avail.city?.toLowerCase().includes(inputLower) ||
+                avail.state?.toLowerCase().includes(inputLower) ||
+                avail.stateShort?.toLowerCase().includes(inputLower)
             );
-
-            if (matches.length === 0) {
-                matches = this.availableLocations.filter(avail =>
-                    avail.city?.toLowerCase() === inputLower
-                );
-            }
-            if (matches.length === 0) {
-                matches = this.availableLocations.filter(avail =>
-                    avail.state?.toLowerCase() === inputLower
-                );
-            }
-
-            if (matches.length === 0) {
-                matches = this.availableLocations.filter(avail =>
-                    // avail.state?.toLowerCase() === inputLower ||
-                    avail.stateShort?.toLowerCase() === inputLower
-                );
-            }
 
             matches.forEach(match => {
                 const matchDesc = match.location?.toLowerCase();
                 const existingUserLoc = userLocationsMap.get(matchDesc);
 
+                // Skip locations already in user's profile
                 if (existingUserLoc) {
-                    this.processedLocations.push({
-                        location: match.location,
-                        city: match.city,
-                        state: match.state,
-                        stateShort: match.stateShort,
-                        type: match.type,
-                        checkedInclude: false,
-                        checkedExclude: false,
-                        isExisting: true,
-                        locationId: existingUserLoc._id
-                    });
-                } else {
-                    this.processedLocations.push({
-                        location: match.location,
-                        city: match.city,
-                        state: match.state,
-                        stateShort: match.stateShort,
-                        type: match.type,
-                        checkedInclude: false,
-                        checkedExclude: false,
-                        isExisting: false
-                    });
+                    skippedExistingCount++;
+                    return;
                 }
+
+                this.processedLocations.push({
+                    location: match.location,
+                    city: match.city,
+                    state: match.state,
+                    stateShort: match.stateShort,
+                    type: match.type,
+                    checkedInclude: false,
+                    checkedExclude: false,
+                    isExisting: false
+                });
             });
 
             if (matches.length === 0) {
@@ -161,11 +142,13 @@ export class BulkLocationUploadComponent implements OnInit {
         });
 
         if (this.processedLocations.length === 0) {
-            this.processError = 'No locations found. Try area names (Downtown, Capitol Hill) or city/state names.';
+            if (skippedExistingCount > 0) {
+                this.processError = `All entered locations (${skippedExistingCount}) already exist in your profile. No new locations to add.`;
+            } else {
+                this.processError = 'No locations found. Try area names (Downtown, Capitol Hill) or city/state names.';
+            }
         } else {
-            const newCount = this.processedLocations.filter(l => !l.isExisting).length;
-            const existingCount = this.processedLocations.filter(l => l.isExisting).length;
-            this.processSuccess = `Found ${this.processedLocations.length} locations: ${newCount} new, ${existingCount} existing.`;
+            this.processSuccess = `Found ${this.processedLocations.length} new locations to add. ${skippedExistingCount} existing location(s) skipped.`;
             this.showProcessedList = true;
         }
     }
@@ -231,33 +214,65 @@ export class BulkLocationUploadComponent implements OnInit {
         }
 
         this.processing = true;
-        let totalOperations = locationsToAdd.length + locationsToRemove.length;
-        let completedOperations = 0;
 
-        const checkComplete = () => {
-            completedOperations++;
-            if (completedOperations === totalOperations) {
-                this.finishSave();
-            }
-        };
+        // Handle additions in bulk
+        if (locationsToAdd.length > 0) {
+            const bulkPayload = {
+                locations: locationsToAdd.map(loc => ({
+                    location: loc.location,
+                    city: loc.city,
+                    state: loc.state,
+                    country: '',
+                    type: loc.type || 'city',
+                    stateShort: loc.stateShort
+                }))
+            };
 
-        locationsToAdd.forEach(loc => {
-            this.addSingleLocation(loc).then(() => checkComplete()).catch(err => {
-                console.error('Failed to add location', err);
-                checkComplete();
+            this.api.addBulkUserLocations(this.userData._id, bulkPayload).subscribe({
+                next: (res: any) => {
+                    console.log('Bulk locations added:', res);
+                    // Continue with removals if any
+                    if (locationsToRemove.length > 0) {
+                        this.processRemovals(locationsToRemove);
+                    } else {
+                        this.finishSave();
+                    }
+                },
+                error: err => {
+                    console.error('Failed to add bulk locations', err);
+                    this.processError = err?.error?.message || 'Failed to add locations.';
+                    this.processing = false;
+                }
             });
-        });
+        } else {
+            // Only removals
+            this.processRemovals(locationsToRemove);
+        }
+    }
+
+    private processRemovals(locationsToRemove: any[]) {
+        let completed = 0;
+        const total = locationsToRemove.length;
+
+        if (total === 0) {
+            this.finishSave();
+            return;
+        }
 
         locationsToRemove.forEach(loc => {
-            this.removeSingleLocation(loc).then(() => checkComplete()).catch(err => {
+            this.removeSingleLocation(loc).then(() => {
+                completed++;
+                if (completed === total) {
+                    this.finishSave();
+                }
+            }).catch(err => {
                 console.error('Failed to remove location', err);
-                checkComplete();
+                completed++;
+                if (completed === total) {
+                    this.finishSave();
+                }
             });
         });
-
-        if (totalOperations === 0) {
-            this.finishSave();
-        }
     }
 
     private finishSave() {

@@ -70,11 +70,17 @@ export class Api {
    //    )
    // }
 
-   addUserLocation(userId: string, data: any): Observable<any> {
-      return this.http.post(`${this.baseUrl}/user/${userId}/locations`, data, {
-         headers: this.getAuthHeaders()
-      });
-   }
+    addUserLocation(userId: string, data: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}/user/${userId}/locations`, data, {
+            headers: this.getAuthHeaders()
+        });
+    }
+
+    addBulkUserLocations(userId: string, data: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}/user/${userId}/locations/bulk`, data, {
+            headers: this.getAuthHeaders()
+        });
+    }
 
    deleteUserLocation(userId: string, locationId: string): Observable<any> {
       return this.http.delete(`${this.baseUrl}/user/${userId}/locations/${locationId}`, {

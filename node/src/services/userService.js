@@ -323,10 +323,10 @@ const deleteLocation = async (userId, locationId) => {
   const location = user.locations.id(locationId);
   if (!location) throw { status: 404, message: "Location not found" };
 
-  // ── STEP 1: Resolve zipcodes for the location being deleted ──────────────
+  // ── STEP 1: Resolve zipcodes for the location being deleted ──────
   const locationZipcodes = await resolveLocationZipcodes(location);
 
-  // ── STEP 2: Get remaining locations (all except the one being deleted) ────
+  // ── STEP 2: Get remaining locations (all except the one being deleted) ───
   const remainingLocations = user.locations.filter(
     (loc) => loc._id.toString() !== locationId.toString()
   );
@@ -416,6 +416,66 @@ const deleteLocation = async (userId, locationId) => {
   await user.save();
 
   return { message: "Location deleted successfully" };
+};
+
+const addBulkLocationsToUser = async (userId, payload) => {
+  const { locations } = payload;
+
+  console.log("Adding bulk locations for userId:", userId);
+  console.log("Locations to add1234:", locations);
+
+  // 1. Validate input
+  for (const loc of locations) {
+    if (!loc.city || !loc.state || !loc.type) {
+      throw { status: 400, message: "Each location must have city, state, and type" };
+    }
+  }
+
+  // 2. Fetch user
+  const user = await User.findById(userId);
+  if (!user) {
+    throw { status: 404, message: "User not found" };
+  }
+
+  // 3. Prepare new location documents
+  const newLocations = locations.map(loc => ({
+    description: loc.location || loc.description,
+    city: loc.city,
+    state: loc.state,
+    stateShort: loc.stateShort || '',
+    country: loc.country || '',
+    type: loc.type || 'city',
+    radius: loc.radius || null,
+    unit: loc.unit || null
+  }));
+
+  // 4. Push to user.locations array
+  user.locations.push(...newLocations);
+
+  // 5. Resolve zipcodes for all new locations
+  const allNewZipcodes = new Set();
+
+  for (const loc of newLocations) {
+    const zipcodes = await resolveLocationZipcodes(loc);
+    zipcodes.forEach(z => allNewZipcodes.add(z));
+  }
+
+  // 6. Update user.service_areas_zipcodes
+  const currentZipcodes = new Set(user.service_areas_zipcodes || []);
+  allNewZipcodes.forEach(z => currentZipcodes.add(z));
+  user.service_areas_zipcodes = Array.from(currentZipcodes);
+
+  // 7. Save user
+  await user.save();
+
+  console.log("Total locations added:", newLocations.length);
+  console.log("Total new zipcodes added:", allNewZipcodes.size);
+
+  return {
+    locationsAdded: newLocations.length,
+    zipcodesAdded: allNewZipcodes.size,
+    locations: newLocations
+  };
 };
 
 const addOrUpdateZipcodePriceOverride = async (userId, overrideData) => {
@@ -756,7 +816,7 @@ module.exports = {
   addCategory, updateCategory, deleteCategory,
   addTask, updateTask, toggleTaskChecked, deleteTask,
   addFilter, updateFilter, toggleFilterChecked, deleteFilter,
-  addLocation, updateLocation, deleteLocation,
+  addLocation, updateLocation, deleteLocation, addBulkLocationsToUser,
   addOrUpdateZipcodePriceOverride, getZipcodePriceOverrides, deleteZipcodePriceOverride,
   addOrUpdateLocationPrice, getLocationPrices, deleteLocationPrice,
   getCheckedTasksWithFilters, getTotalPrice, updateUnselectedZipcodes,

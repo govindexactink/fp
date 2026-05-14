@@ -11,6 +11,13 @@
     margin: 1.75rem auto;
 }
 
+@media (min-width: 576px) {
+    .modal-dialog-2 {
+        max-width: 1000px;
+        margin: 1.75rem auto;
+    }
+}
+
 .modal-content {
     border: none;
     border-radius: 0.5rem;

@@ -77,9 +77,11 @@ userRouter.delete(`${taskBase}/:filterId`, protect, ctrl.deleteFilter);
 // POST   /api/users/:userId/locations
 // PUT    /api/users/:userId/locations/:locationId
 // DELETE /api/users/:userId/locations/:locationId
+// POST   /api/users/:userId/locations/bulk
 userRouter.post("/:userId/locations", protect, ctrl.addLocation);
 userRouter.put("/:userId/locations/:locationId", protect, ctrl.updateLocation);
 userRouter.delete("/:userId/locations/:locationId", protect, ctrl.deleteLocation);
+userRouter.post("/:userId/locations/bulk", protect, ctrl.addBulkLocations);
 
 // ─── OVERLAY / OVERRIDE ROUTES ───────────────────────────────────
 // GET /api/users/:userId/zipcode-prices

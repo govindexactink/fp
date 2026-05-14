@@ -173,6 +173,69 @@ const addLocationsToTask = async (taskId, payload) => {
     return result;
 };
 
+const addBulkLocationsToUser = async (userId, payload) => {
+    const { locations } = payload;
+
+    console.log("Adding bulk locations for userId:", userId);
+    console.log("Locations to add:", locations);
+
+    // 1. Prepare location documents for insertMany
+    const locationDocs = locations.map(loc => ({
+        description: loc.location || loc.description,
+        city: loc.city,
+        state: loc.state,
+        stateShort: loc.stateShort || '',
+        country: loc.country || '',
+        type: loc.type || 'city',
+        radius: loc.radius || null,
+        unit: loc.unit || null,
+        taskId: null, // Not linked to a task
+        categoryId: loc.categoryId || null,
+        serviceArea: [], // Will be populated after zipcode resolution
+        userId // Add userId for easier queries (though not in schema)
+    }));
+
+    // 2. Insert all locations
+    const insertedLocations = await locationModel.insertMany(locationDocs);
+    console.log("Inserted locations:", insertedLocations.length);
+
+    // 3. Resolve zipcodes for all locations and collect them
+    const allNewZipcodes = new Set();
+
+    for (const loc of insertedLocations) {
+        const zipcodes = await resolveLocationZipcodes(loc);
+        zipcodes.forEach(z => allNewZipcodes.add(z));
+
+        // Optionally update the location's serviceArea
+        if (zipcodes.length > 0) {
+            loc.serviceArea = zipcodes.map(zip => ({
+                zipcode: zip,
+                prices: [{ lead: 0, call: 0, appointment: 0 }]
+            }));
+            await loc.save();
+        }
+    }
+
+    // 4. Update user's service_areas_zipcodes
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new AppError("User not found", 404);
+    }
+
+    const currentZipcodes = new Set(user.service_areas_zipcodes || []);
+    allNewZipcodes.forEach(z => currentZipcodes.add(z));
+    user.service_areas_zipcodes = Array.from(currentZipcodes);
+    await user.save();
+
+    console.log("Total new zipcodes added:", allNewZipcodes.size);
+
+    return {
+        locationsAdded: insertedLocations.length,
+        zipcodesAdded: allNewZipcodes.size,
+        locations: insertedLocations
+    };
+};
+
 const deleteLocationFromTask = async (taskId, payload) => {
     const { city, state, type } = payload;
 
@@ -215,5 +278,6 @@ module.exports = {
     updateLocationServiceArea,
     addLocationsToTask,
     deleteLocationFromTask,
-    getLocationsByTaskId
+    getLocationsByTaskId,
+    addBulkLocationsToUser
 };

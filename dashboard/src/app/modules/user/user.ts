@@ -805,7 +805,7 @@ export class User implements OnInit {
             this.editingLocationPrice.state = location.state;
             this.editingLocationPrice.stateShort = location.stateShort || '';
             this.editingLocationPrice.type = location.type || 'city';
-            
+
             // Check for existing location price and populate price fields
             const existingPrice = this.locationPrices.find((lp: any) =>
                 lp.city === location.city &&
@@ -981,11 +981,36 @@ export class User implements OnInit {
             this.filteredLocations = [];
             return;
         }
-        this.filteredLocations = this.availableLocations.filter(loc =>
-            loc.location?.toLowerCase().includes(query) ||
-            loc.city?.toLowerCase().includes(query) ||
-            loc.state?.toLowerCase().includes(query)
+
+        // Build a Set of keys for locations already added to this user
+        const existingKeys = new Set(
+            (this.userData.locations || []).map((loc: any) =>
+                [
+                    loc.description?.toLowerCase(),
+                    loc.city?.toLowerCase(),
+                    loc.state?.toLowerCase(),
+                    loc.type?.toLowerCase()
+                ].filter(Boolean).join('|')
+            )
         );
+
+        this.filteredLocations = this.availableLocations.filter(loc => {
+            const matchesSearch =
+                loc.location?.toLowerCase().includes(query) ||
+                loc.city?.toLowerCase().includes(query) ||
+                loc.state?.toLowerCase().includes(query);
+
+            const locKey = [
+                loc.location?.toLowerCase(),
+                loc.city?.toLowerCase(),
+                loc.state?.toLowerCase(),
+                loc.type?.toLowerCase()
+            ].filter(Boolean).join('|');
+
+            const alreadyAdded = existingKeys.has(locKey);
+
+            return matchesSearch && !alreadyAdded;
+        });
     }
 
     selectLocation(loc: any) {
