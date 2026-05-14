@@ -289,7 +289,7 @@
 
         <!-- ═══════════════ LOCATION MODAL ═══════════════ -->
         <div id="locationModal" class="modal fade">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-dialog2 modal-dialog-centered modal-lg">
                 <div class="modal-content">
 
                     <div class="modal-header">
@@ -305,10 +305,21 @@
 
                         <!-- Search results -->
                         <div class="modal-loc-list" *ngIf="filteredLocations.length">
-                            <div *ngFor="let loc of filteredLocations" class="modal-loc-item"
-                                [class.selected]="isTempSelected(loc)" (click)="selectLocation(loc)">
+                            <div *ngFor="let loc of filteredLocations" class="modal-loc-item">
                                 <span class="modal-loc-check" *ngIf="isTempSelected(loc)">✓</span>
-                                <span>{{ loc.city }}, {{ loc.state }}</span>
+                                <span class="loc-name">{{ loc.city }}, {{ loc.state }}</span>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-success"
+                                        [class.selected]="tempLocations.some(l => l.city === loc.city && l.state === loc.state && l.action === 'include')"
+                                        (click)="selectLocation(loc, 'include')">
+                                        ✓ Include
+                                    </button>
+                                    <button class="btn btn-sm btn-danger"
+                                        [class.selected]="tempLocations.some(l => l.city === loc.city && l.state === loc.state && l.action === 'exclude')"
+                                        (click)="selectLocation(loc, 'exclude')">
+                                        ✕ Exclude
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -322,8 +333,10 @@
                                 Selected ({{ tempLocations.length }})
                             </div>
                             <div class="d-flex flex-wrap gap-2">
-                                <span *ngFor="let l of tempLocations" class="badge bg-primary">
+                                <span *ngFor="let l of tempLocations"
+                                    [class]="'badge ' + (l.action === 'include' ? 'bg-success' : 'bg-danger')">
                                     {{ l.city }}, {{ l.state }}
+                                    <span class="ms-1" style="cursor: pointer;">×</span>
                                 </span>
                             </div>
                         </div>

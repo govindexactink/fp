@@ -84,7 +84,7 @@ const updateUser = async (userId, updateData) => {
   return user;
 };
 
-export const updateUserByinex = async (userId, updateData) => {
+const updateUserByinex = async (userId, updateData) => {
 
   const forbidden = ["password", "role", "_id"];
   forbidden.forEach((f) => delete updateData[f]);

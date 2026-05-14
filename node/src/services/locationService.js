@@ -11,8 +11,25 @@ const getLocations = async (values) => {
     const results = [];
 
     for (const item of values) {
-        const { type, city, state, stateShort } = item;
+        const { type, city, state, stateShort, action } = item;
         console.log("item", item)
+        // If action is exclude, skip zipcode lookup
+        if (action === "exclude") {
+            results.push({
+                location: item.location,
+                city: item.city,
+                state: item.state,
+                type: item.type,
+                lead: item.lead,
+                stateShort: item.stateShort,
+                call: item.call,
+                appointment: item.appointment,
+                zipcodes: []
+            });
+
+            continue;
+        }
+
         let query = {};
 
         if (type === "state") {
