@@ -1141,6 +1141,7 @@ export class Signup implements OnInit {
           state: loc.state,
           location: loc.location,
           type: loc.type,
+          stateShort: loc.stateShort,
           zipcodes
         };
 
@@ -1202,7 +1203,8 @@ export class Signup implements OnInit {
         description: loc.location,
         city: loc.city,
         state: loc.state,
-        type: loc.type
+        type: loc.type,
+        stateShort: loc.stateShort,
       })),
       service_areas_zipcodes: allZipcodes
     };
